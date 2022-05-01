@@ -1,0 +1,4 @@
+radix sort is actually slower than std::sort for the small length arrays
+that are being used,
+
+int is faster than char for most operations, probably the registers are int sized

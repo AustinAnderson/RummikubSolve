@@ -1,0 +1,140 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <algorithm>
+#include "RunScorerBetter.h"
+#include "FastCalcTile.h"
+using namespace std;
+
+// Function to get the largest element from an array
+int getMax(int array[], int n) {
+  char max = array[0];
+  for (int i = 1; i < n; i++)
+    if (array[i] > max)
+      max = array[i];
+  return max;
+}
+
+// Using counting sort to sort the elements in the basis of significant places
+void countingSort(int array[],int outputBuffer[], int size, int place) {
+  const int max = 10;
+  int count[max];
+
+  for (int i = 0; i < max; ++i)
+    count[i] = 0;
+
+  // Calculate count of elements
+  for (int i = 0; i < size; i++)
+    count[(array[i] / place) % 10]++;
+
+  // Calculate cumulative count
+  for (int i = 1; i < max; i++)
+    count[i] += count[i - 1];
+
+  // Place the elements in sorted order
+  for (int i = size - 1; i >= 0; i--) {
+    outputBuffer[count[(array[i] / place) % 10] - 1] = array[i];
+    count[(array[i] / place) % 10]--;
+  }
+
+  for (int i = 0; i < size; i++)
+    array[i] = outputBuffer[i];
+}
+
+// Main function to implement radix sort
+void radixsort(int array[],int outputBuffer[], int size) {
+  // Get maximum element
+  int max = getMax(array, size);
+
+  // Apply counting sort to sort elements based on place value.
+  for (int place = 1; max / place > 0; place *= 10)
+    countingSort(array,outputBuffer, size, place);
+}
+
+// Print an array
+void printArray(char array[], int size) {
+  int i;
+  for (i = 0; i < size; i++)
+    cout << (int)(unsigned char)array[i] << " ";
+  cout << endl;
+}
+void printArray(int array[], int size) {
+  int i;
+  for (i = 0; i < size; i++)
+    cout << FastCalcTile::Printable(array[i]) << " ";
+  cout << endl;
+}
+
+bool charNumericLessThan(char a,char b){
+    return (a-b)<0;
+}
+void zipSorted(int first[], int firstSize,int second[], int secondSize, int output[]){
+    int it1=0;
+    int it2=0;
+    int idx=0;
+    while(it1<firstSize&&it2<secondSize){
+        if(first[it1]<second[it2]){
+            output[idx]=first[it1];
+            it1++;
+            idx++;
+        }
+        else if(second[it2]<first[it1]){
+            output[idx]=second[it2];
+            it2++;
+            idx++;
+        }else{
+            output[idx]=first[it1];
+            it1++;
+            idx++;
+            output[idx]=second[it2];
+            it2++;
+            idx++;
+        }
+    }
+    while(it1<firstSize){
+        output[idx]=first[it1];
+        it1++;
+        idx++;
+    }
+    while(it2<secondSize){
+        output[idx]=second[it2];
+        it2++;
+        idx++;
+    }
+}
+int createRandTile(){
+    int num=rand()%15;
+    TileColor val=TileColorEnum::Values[rand()%4];
+    bool is=false;
+    bool has=rand()%2;
+    int id=rand()%256;
+    return FastCalcTile::bundleFastCalcTile(num,val,is,has,id);
+}
+// Driver code
+int main() {
+  const int othersSize=5;
+  const int size=40;
+  int* baseArray = new int[size];
+  int* others=new int[othersSize];
+  others[0]=createRandTile();
+  others[1]=createRandTile();
+  others[2]=createRandTile();
+  others[3]=createRandTile();
+  others[4]=createRandTile();
+  printArray(others,othersSize);
+  std::sort(others,others+othersSize);
+  for(int i=0;i<size;i++){
+      baseArray[i]=createRandTile();
+  }
+  std::sort(baseArray,baseArray+size);
+  printArray(baseArray,size);
+  cout<<"output"<<endl;
+  int score=0;
+  for(int i=0;i<6000000;i++)
+  {
+      score=RunScorer::score(baseArray,size,others,othersSize);
+  }
+  cout<<score<<endl;
+  delete[] baseArray;
+  delete[] others;
+}

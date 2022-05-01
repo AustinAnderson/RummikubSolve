@@ -1,0 +1,42 @@
+#include "../FastCalcTile.h"
+#include "../TileColor.h"
+#include <iostream>
+#include <bitset>
+using namespace std;
+void test(int num,TileColor color,bool isBoardTile,bool hasEquivalentHandTile,int id,int bundled){
+    cout<<"extract num "<<FastCalcTile::getNumber(bundled)<<" should be "<<num<<endl;
+    cout<<"extract color "<<FastCalcTile::getTileColorIndex(bundled)<<" should be "<<TileColorEnum::ValuesIndex(color)<<endl;
+    cout<<"extract isBoardTile "<<FastCalcTile::getIsBoardTile(bundled)<<" should be "<<isBoardTile<<endl;
+    cout<<"extract hasEquivalentHandTile "<<FastCalcTile::getHasEquivalentHandTile(bundled)<<" should be "<<hasEquivalentHandTile<<endl;
+    cout<<"extract id "<<FastCalcTile::getId(bundled)<<" should be "<<id<<endl;
+    cout<<endl;
+}
+int main(){
+    int num=15;
+    TileColor color=TileColor::BLACK;
+    bool isBoardTile=true;
+    bool hasEquivalentHandTile=false;
+    int id=33;
+    int bundled=FastCalcTile::bundleFastCalcTile(num,color,isBoardTile,hasEquivalentHandTile,id);
+    bitset<32> numBits(num);
+    bitset<32> bundledBits(bundled);
+    cout<<"numBits "<<numBits<<endl;
+    cout<<"bundled "<<bundledBits<<endl;
+
+    test(num,color,isBoardTile,hasEquivalentHandTile,id,bundled);
+
+    num=4;
+    color=TileColor::RED;
+    isBoardTile=true;
+    hasEquivalentHandTile=true;
+    id=93;
+    bundled=FastCalcTile::bundleFastCalcTile(num,color,isBoardTile,hasEquivalentHandTile,id);
+    test(num,color,isBoardTile,hasEquivalentHandTile,id,bundled);
+    num=7;
+    color=TileColor::YELLOW;
+    isBoardTile=false;
+    hasEquivalentHandTile=false;
+    id=0;
+    bundled=FastCalcTile::bundleFastCalcTile(num,color,isBoardTile,hasEquivalentHandTile,id);
+    test(num,color,isBoardTile,hasEquivalentHandTile,id,bundled);
+}
