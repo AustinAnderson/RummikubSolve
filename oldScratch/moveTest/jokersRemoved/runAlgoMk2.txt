@@ -1,0 +1,23 @@
+
+   added for testing 
+       V
+
+B   0  0  1  0  2  0  0  0  3  0  0  4  0  1  0  2  0  3  0  0
+R   0  0  0  1  0  2  0  0  0  3  0  0  0  0  1  0  0  0  0  0
+Y   0  0  0  0  0  0  0  1  0  0  2  0  3  0  0  0  1  0  2  3
+T   1  2  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0
+   1T 2T 3B 3R 4B 4R 4T 4Y 5B 5R 5Y 6B 6Y 9B 9R JB JY QB QY KY
+
+   then iterate right to left flag any 1 where the previous was not 2 with previous 3
+
+
+just figure out unused to calc valid, then find groups only once on the solution
+
+y
+   t
+r
+b
+   c
+l
+v  v
+   1T 2T 3B 3R 4B 4R 4T 4Y 5B 5R 5Y 6B 6Y 9B 9R JB JY QB QY KY

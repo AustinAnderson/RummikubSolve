@@ -1,0 +1,37 @@
+#include <iostream>
+#include "../RunScorerBetter.h"
+#include "../FastCalcTile.h"
+#include "../TileColor.h"
+using namespace std;
+int main(){
+
+    /*1T 2T 3B 3R 4B 4R 4T 4Y 5B 5R 5Y 6B 6Y 9B 9R JB JY QB QY KY KR*/
+
+    int leftSide[16]={
+        FastCalcTile::bundleFastCalcTile(1,TileColor::TEAL,false,false,0),
+        FastCalcTile::bundleFastCalcTile(3,TileColor::BLACK,false,false,2),
+        FastCalcTile::bundleFastCalcTile(4,TileColor::BLACK,false,false,4),
+        FastCalcTile::bundleFastCalcTile(4,TileColor::TEAL,false,false,6),
+        FastCalcTile::bundleFastCalcTile(4,TileColor::YELLOW,false,false,7),
+        FastCalcTile::bundleFastCalcTile(5,TileColor::BLACK,false,false,8),
+        FastCalcTile::bundleFastCalcTile(5,TileColor::RED,false,false,9),
+        FastCalcTile::bundleFastCalcTile(6,TileColor::BLACK,false,false,11),
+        FastCalcTile::bundleFastCalcTile(6,TileColor::YELLOW,false,false,12),
+        FastCalcTile::bundleFastCalcTile(9,TileColor::BLACK,false,false,13),
+        FastCalcTile::bundleFastCalcTile(9,TileColor::RED,false,false,14),
+        FastCalcTile::bundleFastCalcTile(10,TileColor::BLACK,false,false,15),
+        FastCalcTile::bundleFastCalcTile(10,TileColor::YELLOW,false,false,16),
+        FastCalcTile::bundleFastCalcTile(11,TileColor::BLACK,false,false,17),
+        FastCalcTile::bundleFastCalcTile(11,TileColor::YELLOW,false,false,18),
+        FastCalcTile::bundleFastCalcTile(12,TileColor::YELLOW,false,false,19)
+    };
+    int rightSide[5]={
+        FastCalcTile::bundleFastCalcTile(2,TileColor::TEAL,false,false,1),
+        FastCalcTile::bundleFastCalcTile(3,TileColor::RED,false,false,3),
+        FastCalcTile::bundleFastCalcTile(4,TileColor::RED,false,false,5),
+        FastCalcTile::bundleFastCalcTile(5,TileColor::YELLOW,false,false,10),
+        FastCalcTile::bundleFastCalcTile(12,TileColor::RED,false,false,20)
+    };
+    cout<<"score should be 5, got "<<RunScorer::score(leftSide,16,rightSide,5)<<endl;
+
+}

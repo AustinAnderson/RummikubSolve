@@ -1,0 +1,7 @@
+dashboard expression watch FastCalcTile::Printable(current).toString()
+dashboard expression watch FastCalcTile::Printable(sortedList1[it1]).toString()
+dashboard expression watch FastCalcTile::Printable(sortedList2[it2]).toString()
+dashboard expression watch state.debugPrint()
+dashboard expression watch RunScorer::debugTileIntListStr(sortedList1,sortedList1Size)
+dashboard expression watch RunScorer::debugTileIntListStr(sortedList2,sortedList2Size)
+

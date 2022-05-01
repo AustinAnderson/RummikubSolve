@@ -1,0 +1,67 @@
+
+
+BRTY BR[yt]
+BRTY BT[yr]
+BRTY BY[tr]
+BRTY RT[yb]
+BRTY RY[
+BRTY TY
+
+
+
+//fails because 2Bb,3Bh,3Bb*,4Bb is tripped up where 3!=3+1
+            std::string("6Y,7Y,8Y,9Y,10Y 2B,3B,4B,5B,6B ")+
+            std::string("12B,12T,12R  11B,11Y,11R 10B,10T,10Y ")+
+            std::string("12Y,12T,12R  2R,3R,4R 8B,9B,10B   4B,4T,4Y,4R   1B,1T,1Y   11T,11B,11Y ")+
+            std::string("5R,5Y,5T,5B"),
+        "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y",
+
+
+
+            1B,1T,1Y   
+            4B,4T,4Y,4R   
+            5R,5Y,5T,5B
+            10B,10T,10Y
+            11B,11Y,11R  
+            11T,11B,11Y
+            12Y,12T,12R  
+            12B,12T,12R  
+        "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y",
+
+
+        one dup means 5 tiles, so cant become 2 groups, 
+
+        possibilities for 2 dups
+        nB,nB,nR,nT,nY,nY
+        tiles                   | unused
+                                | nB,nY,nB,nR,nT,nY
+        nR,nT,nY                | nB,nY,nB
+        nB,nT,nY                | nB,nY,nR,
+        nB,nR,nY                | nB,nY,nT
+        nB,nR,nT                | nB,nY,nY
+        nB,nR,nT,nY             | nB,nY
+        nB,nT,nY && nB,nR,nY    |             //other permutations of both used are functionally equivalent
+
+
+
+00(2/5)[{ 1B(B )_ 0},{ 1R(H )_ 1},{ 1T(B*)_ 2},{ 1Y(B )_ 4}]
+01(0/1)[{ 2B(B )_ 5},{ 2R(B )_ 6},{ 2Y(H )_ 7}]
+02(0/1)[{ 3B(B*)_ 8},{ 3R(B*)_10},{ 3Y(H )_12}]
+03(5/5)[{ 4B(B )_13},{ 4R(B )_15},{ 4T(B*)_17},{ 4Y(B*)_19}]
+04(0/5)[{ 4B(B )_14},{ 4R(B )_16},{ 4T(H )_18},{ 4Y(H )_20}]
+05(5/6)[{ 5B(B )_21},{ 5R(B )_23},{ 5T(B )_24},{ 5Y(B*)_25},{ 5B(B )_22},{ 5Y(H )_26}]
+06(0/1)[{ 7B(H )_29},{ 7T(H )_30},{ 7Y(B )_31}]
+07(0/1)[{ 8B(B )_32},{ 8R(H )_33},{ 8Y(B )_34}]
+08(0/1)[{ 9B(B*)_35},{ 9R(H )_37},{ 9Y(B )_39}]
+09(1/1)[{10B(B )_40},{10T(B )_42},{10Y(B )_43}]
+10(6/6)[{11B(B )_45},{11R(B )_47},{11T(B )_48},{11Y(B )_49},{11B(B )_46},{11Y(B )_50}]
+11(4/5)[{12B(B )_51},{12R(B )_52},{12T(B )_54},{12Y(B*)_56}]
+12(0/1)[{12R(B )_53},{12T(B )_55},{12Y(H )_57}]
+
+
+        //GDB if currentConfig.str()=="2005050001640"
+
+
+
+
+

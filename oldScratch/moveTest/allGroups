@@ -1,0 +1,35 @@
+  1B,  1T,   1Y,  H1R,
+  2B,       H2Y,   2R, 
+  3B,       H3Y,   3R,
+  4B, H4T,  H4Y,   4R, 
+  4B,  4T,   4Y,   4R,
+  5B,  5T,   5Y,   5R, 
+ H7B, H7T,   7Y, 
+  8B,        8Y,  H8R, 
+  9B,        9Y,  H9R,
+ 10B, 10T,  10Y, 
+ 11B, 11T,  11Y,  11R, 
+ 12B, 12T, H12Y,  12R, 
+ 12B, 12T,        12R,
+
+      H1T,
+ H3B,             H3R,
+  5B,       H5Y, 
+  6B,        6Y, 
+ H9B,             H9R,
+ 10B,       10Y,
+ 11B,       11Y,
+
+
+
+ //make all groups, 
+ then sort remainder by number, 
+ complete runs of remainder by taking from 4 groups
+
+ but strat only worked because I happened to have a 4Y in my hand
+
+
+ valid play will be some set of runs and groups,
+ generate all possible runs, and all possible groups,
+ 
+ and iterate combinations until one with no doublly used tiles and all unused tiles are hand tiles
