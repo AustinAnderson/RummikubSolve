@@ -9,41 +9,45 @@ namespace SolverLogic
 {
     internal class RunScorer
     {
-        public static int Score (FastCalcTile[] list1,FastCalcTile[] list2,int list2Cap)
+        //both unusedFromSelectedGroups and baseUnused should be sorted,
+        //so for this set of tiles not already in groups, find the maximum runs we can
+        //by zipping the two into a single list while checking how many are left, returning a "score" of the number left
+        //golf rules
+        public static int Score (FastCalcTile[] baseUnused,FastCalcTile[] unusedFromSelectedGroups,int unusedFromGroupsCount)
         {
-            if (list2.Length < list2Cap) throw new ArgumentException("list2 cap must be less than total allocated array size for list2");
+            if (unusedFromSelectedGroups.Length < unusedFromGroupsCount) throw new ArgumentException("list2 cap must be less than total allocated array size for list2");
             int score = 0;
             int it1 = 0;
             int it2 = 0;
             RunCalcState state = new RunCalcState();
             FastCalcTile current;
-            while(it1< list1.Length && it2 < list2Cap)
+            while(it1< baseUnused.Length && it2 < unusedFromGroupsCount)
             {
-                if ((int)list1[it1] < (int)list2[it2])
+                if ((int)baseUnused[it1] < (int)unusedFromSelectedGroups[it2])
                 {
-                    current = list1[it1];
+                    current = baseUnused[it1];
                     if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                     it1++;
                 }
-                else if((int)list2[it2]< (int)list1[it1])
+                else if((int)unusedFromSelectedGroups[it2]< (int)baseUnused[it1])
                 {
-                    current = list2[it2];
+                    current = unusedFromSelectedGroups[it2];
                     if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                     it2++;
                 }
                 //tile int encodes unique id, so never equal
             }
-            while (it1 < list1.Length)
+            while (it1 < baseUnused.Length)
             {
-                current = list1[it1];
+                current = baseUnused[it1];
                 if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                 it1++;
             }
-            while (it2 < list2Cap)
+            while (it2 < unusedFromGroupsCount)
             {
-                current = list2[it2];
+                current = unusedFromSelectedGroups[it2];
                 if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
-                it1++;
+                it2++;
             }
             for(int i = 0; i < 4; i++)
             {
