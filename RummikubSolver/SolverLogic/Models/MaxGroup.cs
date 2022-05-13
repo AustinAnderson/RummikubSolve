@@ -6,9 +6,46 @@ using System.Threading.Tasks;
 
 namespace SolverLogic.Models
 {
+    internal struct SizeAndExcludeList
+    {
+        public int size;
+        public int[] excludes;
+    }
     public class MaxGroup
     {
-        private readonly List<FastCalcTile> allGroup;
+        public const int Possibilities_3G = 2;
+        public const int Possibilities_4G = 6;
+        public const int Possibilities_6G = 7;
+        private static readonly SizeAndExcludeList[][] SizeAndExcludeMapByPossibilitySelected;
+        static MaxGroup()
+        {
+            SizeAndExcludeMapByPossibilitySelected = new SizeAndExcludeList[8][];
+            SizeAndExcludeMapByPossibilitySelected[Possibilities_3G] = new SizeAndExcludeList[]
+            {
+                new SizeAndExcludeList{ size = 0, excludes = new int[] {0,1,2}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {}},
+            };
+            SizeAndExcludeMapByPossibilitySelected[Possibilities_4G] = new SizeAndExcludeList[]
+            {
+                new SizeAndExcludeList{ size = 0, excludes = new int[] {0,1,2,3}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {0}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {1}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {2}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {3}},
+                new SizeAndExcludeList{ size = 4, excludes = new int[] {}}
+            };
+            SizeAndExcludeMapByPossibilitySelected[Possibilities_6G] = new SizeAndExcludeList[]
+            {
+                new SizeAndExcludeList{ size = 0, excludes = new int[] {0,1,2,3,4,5}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {0,4,5}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {1,4,5}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {2,4,5}},
+                new SizeAndExcludeList{ size = 3, excludes = new int[] {3,4,5}},
+                new SizeAndExcludeList{ size = 4, excludes = new int[] {4,5}},
+                new SizeAndExcludeList{ size = 6, excludes = new int[] {}}
+            };
+        }
+        private readonly FastCalcTile[] allGroup;
         private int selected;
         public int PossibilityCount { get; private set; }
         public int CurrentPossibilityKey => selected;
@@ -16,21 +53,21 @@ namespace SolverLogic.Models
 
         public MaxGroup(List<Tile> tilesFound)
         {
-            allGroup = tilesFound.Select(x=>x.ToFastCalcTile()).ToList();
+            allGroup = tilesFound.Select(x=>x.ToFastCalcTile()).ToArray();
             //if 3, all or nothing,
             //if 4, all, nothing, and the 4 3-groups leaving out 1
             //if 6, same as 4 but also the possibility of 2 3-groups at the same time
-            PossibilityCount = 7;
-            if (allGroup.Count == 3)
+            PossibilityCount = Possibilities_6G;
+            if (allGroup.Length== 3)
             {
-                PossibilityCount = 2;
+                PossibilityCount = Possibilities_3G;
             }
-            else if (allGroup.Count == 4)
+            else if (allGroup.Length== 4)
             {
-                PossibilityCount = 6;
+                PossibilityCount = Possibilities_4G;
             }
             string errorCtx = $"invalid group [{string.Join(",", tilesFound.Select(x => x.DebugDisplay))}]: ";
-            if(!new[] { 3, 4, 6 }.Contains(allGroup.Count))
+            if(!new[] { 3, 4, 6 }.Contains(allGroup.Length))
             {
                 throw new ArgumentException(errorCtx+"size must be either 3, 4, or 6");
             }
@@ -51,9 +88,23 @@ namespace SolverLogic.Models
                 lastColor = tilesFound[i].Color;
             }
         }
-        public List<FastCalcTile[]?> GetGroupForPossibilityKey(int key)
+        public FastCalcTile[] GetGroupForPossibilityKey(int key)
         {
-            FastCalcTile[]? group = null;
+            var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
+            if (res.size == 0) return new FastCalcTile[] { };
+            if (IsAtLast) return allGroup;
+            var group = new FastCalcTile[res.size];
+            int index = 0;
+            for(int i = 0; i < allGroup.Length; i++)
+            {
+                if(!res.excludes.Contains(i))
+                {
+                    group[index] = allGroup[i];
+                    index++;
+                }
+            }
+            return group;
+            /*
             //last is all used
             if (key == PossibilityCount - 1)
             {
@@ -63,7 +114,12 @@ namespace SolverLogic.Models
             {
 
                 //copy all the tiles from the all group that aren't allGroup[possibilityCount-1]
-                if (PossibilityCount - 1 < allGroup.Count)
+                if (selected < PossibilityCount - 1)
+                {
+                    if (PossibilityCount == 7) { }
+                    group=new FastCalcTile[allGroup.Count - 1];
+                }
+                else if (PossibilityCount == 7 && )
                 {
                     group=new FastCalcTile[allGroup.Count - 1];
                 }
@@ -74,7 +130,7 @@ namespace SolverLogic.Models
                 int index = 0;
                 for (int i = 0; i < allGroup.Count; i++)
                 {
-                    if (i != PossibilityCount - 1)
+                    if (i != selected - 1 && i< PossibilityCount)
                     {
                         group[index]=allGroup[i];
                         index++;
@@ -86,19 +142,20 @@ namespace SolverLogic.Models
                 //else key == 0, all unused, return empty group
                 group = new FastCalcTile[] { };
             }
-            return new List<FastCalcTile[]?> { group };
+            return group;
+            */
         }
         public void AddCurrentUnused(FastCalcTile[] addTo, ref int addLocation)
         {
             if(selected == 0)
             {
-                for(int i = 0; i < allGroup.Count; i++)
+                for(int i = 0; i < allGroup.Length; i++)
                 {
                     addTo[addLocation]=allGroup[i];
                     addLocation++;
                 }
             }
-            else
+            else if (PossibilityCount != 2)
             {
                 //if(possibilityCount==2) done, using all tiles
                 //1-4= return that tile as unused
@@ -129,6 +186,22 @@ namespace SolverLogic.Models
             selected = 0;
         }
         public static IComparer<MaxGroup> Comparer { get; } = Comparer<MaxGroup>.Create((x, y) => x.allGroup[0].Number - y.allGroup[0].Number);
-        public override string ToString() => $"({selected}/{PossibilityCount - 1})[{string.Join(",", allGroup.Select(x => x.ToString()))}])";
+        public override string ToString()
+        {
+            var unused = new FastCalcTile[10];
+            int refAddLoc = 0;
+            AddCurrentUnused(unused, ref refAddLoc);
+            var reps=new List<string>();
+            foreach(var tile in allGroup)
+            {
+                var selectionIndicator = ">";
+                if (unused.Contains(tile))
+                {
+                    selectionIndicator = " ";
+                }
+                reps.Add(selectionIndicator+tile);
+            }
+            return $"({selected}/{PossibilityCount - 1})[{string.Join(",", reps)}])";
+        }
     }
 }

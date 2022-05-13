@@ -36,6 +36,12 @@ namespace SolverLogic
             Console.WriteLine();
             Console.WriteLine($"Checking {expectedPossibilitiesCount} possibilities...");
 
+            //iterate over the possible selections of groupings for each number,
+            //and for each set of groups, find the the number of tiles left over after 
+            //putting all the remaining tiles in the maximum number of runs
+            //the run scorer doesn't actually need to find the max number of runs,
+            //as long as it gets the remaining count, and we have the solution key for the groups
+            //by the time the group possibility iteration is done.
             var currentPossibilitySetFastCalc=new FastCalcTile[groups.Count*6];
             int currentDigit = 0;
             var done = false;
@@ -106,6 +112,8 @@ namespace SolverLogic
             {
                 Console.WriteLine("no solution found");
             }
+            //with the solution key, pick that configuration of groups,
+            //and now actually find the most possible runs with the remaining tiles
             return score;
         }
     }

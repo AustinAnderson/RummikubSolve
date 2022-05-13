@@ -45,7 +45,7 @@ namespace SolverLogic.Models
         public Tile? EquivalentHandTile { get; set; }
         public bool IsBoardTile { get; set; }
         public int Number { get; private set; }
-        public int Id { get; internal set; }
+        public int Id { get; set; }
         public TileColor Color { get; private set; }
         public bool IsJoker { get; private set; }
         public FastCalcTile ToFastCalcTile()
