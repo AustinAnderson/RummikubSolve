@@ -38,29 +38,11 @@ namespace SolverLogic
             }
             Console.WriteLine();
             Console.WriteLine($"Checking {expectedPossibilitiesCount} possibilities...");
-
-            //iterate over the possible selections of groupings for each number,
-            //and for each set of groups, find the the number of tiles left over after 
-            //putting all the remaining tiles in the maximum number of runs
-            //the run scorer doesn't actually need to find the max number of runs,
-            //as long as it gets the remaining count, and we have the solution key for the groups
-            //by the time the group possibility iteration is done.
-            var currentPossibilitySetFastCalc=new FastCalcTile[groups.Count*6];
-            int currentDigit = 0;
-            var done = false;
-            //invalid should also get max int as score to make currentScore<score false
+            int[] solutionKey = new int[groups.Count];
             int score = int.MaxValue;
-            //which possibility on each group
-            var solutionKey = new int[groups.Count];
-            int currentPossibility = 0;
-            while (!done)
-            {
-                int possibilitySetSize = 0;
-                for(int i = 0; i < groups.Count; i++)
-                {
-                    groups[i].AddCurrentUnused(currentPossibilitySetFastCalc, ref possibilitySetSize);
-                }
-                int currentScore = RunScorer.Score(baseUnusedFastCalcArray, currentPossibilitySetFastCalc, possibilitySetSize);
+            foreach(var (unusedSet, unusedCount) in new MaxGroupIterable(groups)) 
+            { 
+                int currentScore = RunScorer.Score(baseUnusedFastCalcArray, unusedSet, unusedCount);
                 if (currentScore < score)
                 {
                     score= currentScore;
@@ -68,35 +50,6 @@ namespace SolverLogic
                     {
                         solutionKey[i] = groups[i].CurrentPossibilityKey;
                     }
-                }
-                if (groups[currentDigit].IsAtLast)
-                {
-                    while (!done && groups[currentDigit].IsAtLast)
-                    {
-                        currentDigit++;
-                        if(currentDigit >= groups.Count)
-                        {
-                            done = true;
-                        }
-                    }
-                    if (!done)
-                    {
-                        groups[currentDigit].MoveNext();
-                        for(int i = 0; i < currentDigit; i++)
-                        {
-                            groups[i].ResetIteration();
-                        }
-                        currentDigit = 0;
-                    }
-                }
-                else
-                {
-                    groups[currentDigit].MoveNext();
-                }
-                currentPossibility++;
-                if (currentPossibility % 100000 == 0)
-                {
-                    Console.WriteLine($"{currentPossibility} possibilities visited");
                 }
             }
             watch.Stop();

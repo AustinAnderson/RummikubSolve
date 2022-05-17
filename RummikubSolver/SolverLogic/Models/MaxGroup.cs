@@ -104,46 +104,7 @@ namespace SolverLogic.Models
                 }
             }
             return group;
-            /*
-            //last is all used
-            if (key == PossibilityCount - 1)
-            {
-                group = allGroup.ToArray();
-            }
-            else if (key != 0)
-            {
-
-                //copy all the tiles from the all group that aren't allGroup[possibilityCount-1]
-                if (selected < PossibilityCount - 1)
-                {
-                    if (PossibilityCount == 7) { }
-                    group=new FastCalcTile[allGroup.Count - 1];
-                }
-                else if (PossibilityCount == 7 && )
-                {
-                    group=new FastCalcTile[allGroup.Count - 1];
-                }
-                else
-                {
-                    group=new FastCalcTile[allGroup.Count];
-                }
-                int index = 0;
-                for (int i = 0; i < allGroup.Count; i++)
-                {
-                    if (i != selected - 1 && i< PossibilityCount)
-                    {
-                        group[index]=allGroup[i];
-                        index++;
-                    }
-                }
-            }
-            else
-            {
-                //else key == 0, all unused, return empty group
-                group = new FastCalcTile[] { };
-            }
-            return group;
-            */
+            
         }
         public void AddCurrentUnused(FastCalcTile[] addTo, ref int addLocation)
         {
