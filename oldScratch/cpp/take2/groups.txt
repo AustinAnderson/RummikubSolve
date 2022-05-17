@@ -29,18 +29,39 @@ BRTY TY
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y",
 
 
-        one dup means 5 tiles, so cant become 2 groups, 
+        one dup means 5 tiles, so cant become 2 groups, so is same as 4 group and not using group with unused dup interchangable with used
+        nB, nB, nR, nT, nY
+        nB, nR, nT, nY | nB
+
 
         possibilities for 2 dups
-        nB,nB,nR,nT,nY,nY
-        tiles                   | unused
-                                | nB,nY,nB,nR,nT,nY
-        nR,nT,nY                | nB,nY,nB
-        nB,nT,nY                | nB,nY,nR,
-        nB,nR,nY                | nB,nY,nT
-        nB,nR,nT                | nB,nY,nY
-        nB,nR,nT,nY             | nB,nY
-        nB,nT,nY && nB,nR,nY    |             //other permutations of both used are functionally equivalent
+        nB, nB, nR, nT, nY, nY
+        tiles                     | unused
+                                  | nB, nY, nB, nR, nT, nY
+        nR, nT, nY                | nB, nY, nB
+        nB, nT, nY                | nB, nY, nR,
+        nB, nR, nY                | nB, nY, nT
+        nB, nR, nT                | nB, nY, nY
+        nB, nR, nT, nY            | nB, nY
+        nB, nT, nY && nB, nR, nY  |             //other permutations of both used are functionally equivalent
+
+        possibilities for 3 dups, should be the same as 3 group and 4 group separate
+        nB, nB, nT, nT, nY, nY, nR
+        tiles                     | unused
+                                  | nB, nY, nB, nR, nT, nY, nT
+        nB, nT, nY                | nB, nY, nT, nR
+        nB, nT, nR                | nB, nY, nY, nT
+        nB, nY, nR                | n
+        nR, nY, nT                |
+        nB, nT, nY, nR            | nB, nT, nY
+        nB, nT, nY && nR, nT, nY  | nB
+        nB, nT, nY && nB, nT, nY  | nR
+        nB, nT, nY && nB, nR, nY  | nT
+        nB, nT, nY && nB, nR, nT  | nY
+        all                       |
+
+
+
 
 
 

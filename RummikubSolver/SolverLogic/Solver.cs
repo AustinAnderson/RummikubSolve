@@ -60,13 +60,10 @@ namespace SolverLogic
                     groups[i].AddCurrentUnused(currentPossibilitySetFastCalc, ref possibilitySetSize);
                     currentConfigStr += "" + groups[i].CurrentPossibilityKey;
                 }
-                if (currentConfigStr == "2005050001640")
-                {
-                    Console.WriteLine("yay");
-                }
                 int currentScore = RunScorer.Score(baseUnusedFastCalcArray, currentPossibilitySetFastCalc, possibilitySetSize);
                 if (currentScore < score)
                 {
+                    score= currentScore;
                     for(int i = 0; i < groups.Count; i++)
                     {
                         solutionKey[i] = groups[i].CurrentPossibilityKey;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SolverLogic
 {
-    internal class RunScorer
+    public class RunScorer
     {
         //both unusedFromSelectedGroups and baseUnused should be sorted,
         //so for this set of tiles not already in groups, find the maximum runs we can
