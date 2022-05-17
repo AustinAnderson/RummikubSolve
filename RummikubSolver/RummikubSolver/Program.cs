@@ -11,4 +11,4 @@ var solver = new Solver(
                 "5R,5Y,5T,5B").Split(new[] { ',', ' ' }).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new Tile(x.Trim())).ToList(),
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y".Split(",").Select(x => new Tile(x.Trim())).ToList()
 );
-Console.WriteLine("final score: "+solver.Solve());
+Console.WriteLine("final score: "+ await solver.Solve());

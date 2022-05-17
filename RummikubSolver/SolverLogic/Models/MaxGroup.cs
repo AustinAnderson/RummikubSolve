@@ -46,11 +46,7 @@ namespace SolverLogic.Models
             };
         }
         private readonly FastCalcTile[] allGroup;
-        private int selected;
         public int PossibilityCount { get; private set; }
-        public int CurrentPossibilityKey => selected;
-        public bool IsAtLast => selected == PossibilityCount - 1;
-
         public MaxGroup(List<Tile> tilesFound)
         {
             allGroup = tilesFound.Select(x=>x.ToFastCalcTile()).ToArray();
@@ -92,7 +88,6 @@ namespace SolverLogic.Models
         {
             var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
             if (res.size == 0) return new FastCalcTile[] { };
-            if (IsAtLast) return allGroup;
             var group = new FastCalcTile[res.size];
             int index = 0;
             for(int i = 0; i < allGroup.Length; i++)
@@ -106,9 +101,9 @@ namespace SolverLogic.Models
             return group;
             
         }
-        public void AddCurrentUnused(FastCalcTile[] addTo, ref int addLocation)
+        public void AddUnusedForSelected(FastCalcTile[] addTo, ref int addLocation, int whichConf)
         {
-            if(selected == 0)
+            if(whichConf == 0)
             {
                 for(int i = 0; i < allGroup.Length; i++)
                 {
@@ -121,14 +116,14 @@ namespace SolverLogic.Models
                 //if(possibilityCount==2) done, using all tiles
                 //1-4= return that tile as unused
                 //else possibility #6: selected==5 and so using all the tiles, no add
-                if (selected < 5)
+                if (whichConf < 5)
                 {
-                    addTo[addLocation] = allGroup[selected - 1];
+                    addTo[addLocation] = allGroup[whichConf - 1];
                     addLocation++;
                 }
                 //selected==5 same as 4 tile case (using the first 4), but add the two dups to unused
                 //if we have the 2 dups add them unless all used
-                if (PossibilityCount == 7 && selected != 6)
+                if (PossibilityCount == 7 && whichConf != 6)
                 {
                     addTo[addLocation] = allGroup[4];
                     addLocation++;
@@ -136,33 +131,17 @@ namespace SolverLogic.Models
                     addLocation++;
                 }
             }
-        }
 
-        public void MoveNext()
-        {
-            selected++;
-        }
-        public void ResetIteration()
-        {
-            selected = 0;
         }
         public static IComparer<MaxGroup> Comparer { get; } = Comparer<MaxGroup>.Create((x, y) => x.allGroup[0].Number - y.allGroup[0].Number);
         public override string ToString()
         {
-            var unused = new FastCalcTile[10];
-            int refAddLoc = 0;
-            AddCurrentUnused(unused, ref refAddLoc);
             var reps=new List<string>();
             foreach(var tile in allGroup)
             {
-                var selectionIndicator = ">";
-                if (unused.Contains(tile))
-                {
-                    selectionIndicator = " ";
-                }
-                reps.Add(selectionIndicator+tile);
+                reps.Add(tile.ToString());
             }
-            return $"({selected}/{PossibilityCount - 1})[{string.Join(",", reps)}])";
+            return $"{PossibilityCount}[{string.Join(",", reps)}]";
         }
     }
 }

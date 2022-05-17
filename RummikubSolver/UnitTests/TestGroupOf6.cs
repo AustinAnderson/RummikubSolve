@@ -17,8 +17,8 @@ namespace UnitTests.TestMaxGroupIteration
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
             var selected=new List<Tile>();
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,0);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,0);
         }
         [TestMethod]
         public void FirstGroupOf3Option()
@@ -27,10 +27,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 1; i++) group.MoveNext();
             var selected = tiles.TileExceptIndexes(new[] { 0, 4, 5 });
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,1);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,1);
         }
         [TestMethod]
         public void SecondGroupOf3Option()
@@ -39,10 +38,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 2; i++) group.MoveNext();
             var selected = tiles.TileExceptIndexes(new[] { 1, 4, 5 });
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,2);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,2);
         }
         [TestMethod]
         public void ThirdGroupOf3Option()
@@ -51,10 +49,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 3; i++) group.MoveNext();
             var selected = tiles.TileExceptIndexes(new[] { 2, 4, 5 });
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,3);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,3);
         }
         [TestMethod]
         public void FourthGroupOf3Option()
@@ -63,10 +60,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 4; i++) group.MoveNext();
             var selected = tiles.TileExceptIndexes(new[] { 3, 4, 5 });
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,4);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,4);
         }
         [TestMethod]
         public void GroupOf4Option()
@@ -75,10 +71,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 5; i++) group.MoveNext();
             var selected = tiles.TileExceptIndexes(new[] { 4, 5 });
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,5);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,5);
         }
         [TestMethod]
         public void AllOption()
@@ -87,11 +82,9 @@ namespace UnitTests.TestMaxGroupIteration
             int id = 0;
             tiles.ForEach(x=>x.Id = id++);
             var group = new MaxGroup(tiles);
-            for(int i = 0; i < 6; i++) group.MoveNext();
-            Assert.IsTrue(group.IsAtLast, "all should be last");
             var selected = tiles;
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,6);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.TileExcept(selected), group,6);
         }
     }
 }
