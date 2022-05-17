@@ -7,63 +7,25 @@ using System.Threading.Tasks;
 
 namespace SolverLogic.Models
 {
-    public class MaxGroupIterable : IEnumerable<(FastCalcTile[],int)>
+    public class MaxGroupIterable 
     {
         private readonly List<MaxGroup> groups;
+        private readonly FastCalcTile[] buffer;
 
         public MaxGroupIterable(List<MaxGroup> groups)
         {
             this.groups = groups;
+            buffer = new FastCalcTile[groups.Count * 6];
         }
-        public IEnumerator<(FastCalcTile[],int)> GetEnumerator()
+        public (FastCalcTile[],int) GetUnusedForKey(GroupConf conf)
         {
-            //TODO: make MaxGroup stateless, keep iteration as only list of int,
-            //then iterate up in one thread and down in another
-            var done = false;
-            int currentDigit = 0;
-            //which possibility on each group
-            var solutionKey = new int[groups.Count];
-            int currentPossibility = 0;
-            var currentPossibilitySetFastCalc=new FastCalcTile[groups.Count*6];
-            while (!done)
+            int possibilitySetSize = 0;
+            for(int i = 0; i < groups.Count; i++)
             {
-                int possibilitySetSize = 0;
-                for(int i = 0; i < groups.Count; i++)
-                {
-                    groups[i].AddCurrentUnused(currentPossibilitySetFastCalc, ref possibilitySetSize);
-                }
-                yield return (currentPossibilitySetFastCalc,possibilitySetSize);
-                if (groups[currentDigit].IsAtLast)
-                {
-                    while (!done && groups[currentDigit].IsAtLast)
-                    {
-                        currentDigit++;
-                        if(currentDigit >= groups.Count)
-                        {
-                            done = true;
-                        }
-                    }
-                    if (!done)
-                    {
-                        groups[currentDigit].MoveNext();
-                        for(int i = 0; i < currentDigit; i++)
-                        {
-                            groups[i].ResetIteration();
-                        }
-                        currentDigit = 0;
-                    }
-                }
-                else
-                {
-                    groups[currentDigit].MoveNext();
-                }
-                currentPossibility++;
+                groups[i].AddUnusedForSelected(buffer, ref possibilitySetSize, conf[i]);
             }
+            return (buffer, possibilitySetSize);
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
     }
 }

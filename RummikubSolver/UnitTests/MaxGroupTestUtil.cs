@@ -43,19 +43,19 @@ namespace UnitTests
         {
             return tiles.TileExcept(new[] { new Tile(tileRep) });
         }
-        public static void AssertCurrentUnusedMatches(IEnumerable<Tile> expected, MaxGroup group)
+        public static void AssertCurrentUnusedMatches(IEnumerable<Tile> expected, MaxGroup group, int key)
         {
             var unused = new FastCalcTile[10];
             int addLocation = 0;
-            group.AddCurrentUnused(unused, ref addLocation);
+            group.AddUnusedForSelected(unused, ref addLocation,key);
             var unusedStr=string.Join(",", unused.Take(addLocation).Select(x => x.ToString()));
             var expectedUnused = string.Join(",", expected.Select(x => x.ToFastCalcTile().ToString()));
             Assert.AreEqual(expectedUnused, unusedStr,"unused lists don't match");
         }
-        public static void AssertGroupedMatches([DisallowNull] IEnumerable<Tile> expected, MaxGroup group)
+        public static void AssertGroupedMatches([DisallowNull] IEnumerable<Tile> expected, MaxGroup group, int key)
         {
             if (expected == null) Assert.Inconclusive();//false positive CS8604
-            var selected=string.Join(",",group.GetGroupForPossibilityKey(group.CurrentPossibilityKey).Select(x=>x.ToString()));
+            var selected=string.Join(",",group.GetGroupForPossibilityKey(key).Select(x=>x.ToString()));
 #pragma warning disable CS8604 
             var expectedStr=string.Join(",",expected.Select(t => t.ToFastCalcTile().ToString()).ToArray());
 #pragma warning restore CS8604 

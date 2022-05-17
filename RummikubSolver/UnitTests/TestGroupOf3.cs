@@ -14,19 +14,17 @@ namespace UnitTests.TestMaxGroupIteration
             var tiles = "3B,3R,3T".Split(",").Select(x => new Tile(x)).ToList();
             var group = new MaxGroup(tiles);
             var selected=new List<Tile>();
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,0);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,0);
         }
         [TestMethod]
         public void AllOption()
         {
             var tiles = "3B,3R,3T".Split(",").Select(x => new Tile(x)).ToList();
             var group = new MaxGroup(tiles);
-            group.MoveNext();
-            Assert.IsTrue(group.IsAtLast, "all should be last");
             var selected = tiles;
-            MaxGroupTestUtil.AssertGroupedMatches(selected, group);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group);
+            MaxGroupTestUtil.AssertGroupedMatches(selected, group,1);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,1);
         }
     }
 }
