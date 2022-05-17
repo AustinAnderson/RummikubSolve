@@ -17,6 +17,8 @@ namespace SolverLogic.Models
         }
         public IEnumerator<(FastCalcTile[],int)> GetEnumerator()
         {
+            //TODO: make MaxGroup stateless, keep iteration as only list of int,
+            //then iterate up in one thread and down in another
             var done = false;
             int currentDigit = 0;
             //which possibility on each group
