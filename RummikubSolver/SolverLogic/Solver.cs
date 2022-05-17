@@ -1,6 +1,7 @@
 ﻿using SolverLogic.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace SolverLogic
         }
         public int Solve()
         {
+            Stopwatch watch= new Stopwatch();
+            watch.Start();
             var groups = MaxGroupFinder.FindMaxGroups(tileSet, out List<Tile> groupBaseUnused);
             groups.Sort(MaxGroup.Comparer);
             var baseUnusedFastCalcArray=groupBaseUnused.Select(t=>t.ToFastCalcTile()).OrderBy(x=>(int)x).ToArray();
@@ -49,16 +52,13 @@ namespace SolverLogic
             int score = int.MaxValue;
             //which possibility on each group
             var solutionKey = new int[groups.Count];
-            var currentConfigStr = "";
             int currentPossibility = 0;
             while (!done)
             {
                 int possibilitySetSize = 0;
-                currentConfigStr = "";
                 for(int i = 0; i < groups.Count; i++)
                 {
                     groups[i].AddCurrentUnused(currentPossibilitySetFastCalc, ref possibilitySetSize);
-                    currentConfigStr += "" + groups[i].CurrentPossibilityKey;
                 }
                 int currentScore = RunScorer.Score(baseUnusedFastCalcArray, currentPossibilitySetFastCalc, possibilitySetSize);
                 if (currentScore < score)
@@ -99,7 +99,8 @@ namespace SolverLogic
                     Console.WriteLine($"{currentPossibility} possibilities visited");
                 }
             }
-            Console.WriteLine("done");
+            watch.Stop();
+            Console.WriteLine("done in "+watch.Elapsed.TotalSeconds+ " seconds");
             if (score < int.MaxValue)
             {
                 Console.WriteLine("Solution found at");
