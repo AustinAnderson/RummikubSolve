@@ -18,9 +18,10 @@ namespace SolverLogic.Models
                 {
                     //sorted by number,color,!isBoard; that means if two next to each other
                     //first is board and second is hand
-                    tiles[i].EquivalentHandTile = tiles[i + 1];
+                    tiles[i].EquivalentHandTileId = tiles[i + 1].Id;
                 }
             }
+            tiles[tiles.Count-1].Id = tiles[tiles.Count-2].Id+1;
             Tiles = tiles;
         }
         public IReadOnlyList<Tile> Tiles { get; }

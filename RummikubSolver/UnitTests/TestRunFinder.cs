@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SolverLogic;
-using SolverLogic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +9,12 @@ using System.Threading.Tasks;
 namespace UnitTests
 {
     [TestClass]
-    public class TestRunCalc
+    public class TestRunFinder
     {
-        
         [TestMethod]
-        public void FindsScoreCorrectly()
+        public void TestRunFound()
         {
-            var baseUnused = new[]
+            var tiles= new[]
             {
                 RunTestUtil.MakeFastCalcTile("1Th"),
                 RunTestUtil.MakeFastCalcTile("3Bh"),
@@ -27,9 +25,7 @@ namespace UnitTests
                 RunTestUtil.MakeFastCalcTile("9Rh"),
                 RunTestUtil.MakeFastCalcTile("ABb"),
                 RunTestUtil.MakeFastCalcTile("AYb"),
-            };
-            var currentPossibilitySetUnused = new[]
-            {
+
                 RunTestUtil.MakeFastCalcTile("4Bb"),
                 RunTestUtil.MakeFastCalcTile("4Rb"),
                 RunTestUtil.MakeFastCalcTile("4Th"),
@@ -39,24 +35,30 @@ namespace UnitTests
                 RunTestUtil.MakeFastCalcTile("5Yh"),
                 RunTestUtil.MakeFastCalcTile("BBb"),
                 RunTestUtil.MakeFastCalcTile("BYb"),
-                RunTestUtil.MakeFastCalcTile("CYb*"),
-
-
-
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
+                RunTestUtil.MakeFastCalcTile("CYb*")
             };
-            var arr = new UnusedFastCalcArray
+            var results= RunFinder.FindRuns(tiles);
+            var found=results.Runs.Select(x=>string.Join(",",x)).ToArray();
+            var expectedRuns = new[]
             {
-                Set = currentPossibilitySetUnused,
-                Count = 10
+                new[]{ "3Rh","4Rb","5Rb"},
+                new[]{ "4Yh","5Yh","6Yb"},
+                new[]{ "AYb","BYb","CYb*"},
+                new[]{ "3Bh","4Bb","5Bb","6Bb"},
+                new[]{ "9Bh","ABb","BBb"}
+
+            }.Select(a=>string.Join(",",a.Select(x=>RunTestUtil.MakeFastCalcTile(x)))).ToArray();
+            foreach(var expectedRun in expectedRuns)
+            {
+                Assert.IsTrue(found.Contains(expectedRun),$"found is missing '{expectedRun}'");
+            }
+            var expectedHand= new[]
+            {
+                RunTestUtil.MakeFastCalcTile("1Th"),
+                RunTestUtil.MakeFastCalcTile("4Th"),
+                RunTestUtil.MakeFastCalcTile("9Rh")
             };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(3, currentScore, "score should be 3");
+            Assert.AreEqual(string.Join(",", expectedHand), string.Join(",", results.Remainder));
         }
     }
 }

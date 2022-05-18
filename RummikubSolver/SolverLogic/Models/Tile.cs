@@ -42,7 +42,7 @@ namespace SolverLogic.Models
                 };
             }
         }
-        public Tile? EquivalentHandTile { get; set; }
+        public int? EquivalentHandTileId { get; set; }
         public bool IsBoardTile { get; set; }
         public int Number { get; private set; }
         public int Id { get; set; }
@@ -50,7 +50,7 @@ namespace SolverLogic.Models
         public bool IsJoker { get; private set; }
         public FastCalcTile ToFastCalcTile()
         {
-            return new FastCalcTile((byte)Number,Color,IsBoardTile,EquivalentHandTile!=null,(ushort)Id);
+            return new FastCalcTile((byte)Number,Color,IsBoardTile,EquivalentHandTileId!=null,(ushort)Id);
         }
         public static bool operator < (Tile l, Tile r) => Comparer.Compare(l, r) < 0;
         public static bool operator > (Tile l, Tile r) => Comparer.Compare(l, r) > 0;
@@ -60,8 +60,9 @@ namespace SolverLogic.Models
         }
 
         public static IComparer<Tile> Comparer => new TileComparer();
-        public string DebugDisplay => $"({Id:X2})|{""+Number,2}{Color.ToString()[0]} {(IsBoardTile?"b":"h")}{(EquivalentHandTile==null?" ":"*")}";
-        public override string ToString() => $"{ConsoleColor.TileBackground}({Id:X2})|{Color.ColorCode()}{Number:00}{ConsoleColor.ResetCode}";
+        public string DebugDisplay => $"({Id:X2})|{""+Number,2}{Color.ToString()[0]} {(IsBoardTile?"b":"h")}{(EquivalentHandTileId==null?" ":"*")}";
+        //public override string ToString() => $"{ConsoleColor.TileBackground}({Id:X2})|{ConsoleColor.ResetCode}{Color.ColorCode()}{Number:00}{ConsoleColor.ResetCode}";
+        public override string ToString() => $"{ConsoleColor.TileBackground}|{ConsoleColor.ResetCode}{Color.ColorCode()}{Number,-2}{ConsoleColor.TileBackground}|{ConsoleColor.ResetCode}";
         private class TileComparer : IComparer<Tile>
         {
             public int Compare(Tile? x, Tile? y)

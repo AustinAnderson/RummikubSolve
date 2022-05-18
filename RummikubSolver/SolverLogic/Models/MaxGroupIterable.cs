@@ -17,14 +17,27 @@ namespace SolverLogic.Models
             this.groups = groups;
             buffer = new FastCalcTile[groups.Count * 6];
         }
-        public (FastCalcTile[],int) GetUnusedForKey(GroupConf conf)
+        public UnusedFastCalcArray GetUnusedForKey(GroupConf conf)
         {
             int possibilitySetSize = 0;
             for(int i = 0; i < groups.Count; i++)
             {
                 groups[i].AddUnusedForSelected(buffer, ref possibilitySetSize, conf[i]);
             }
-            return (buffer, possibilitySetSize);
+            return new UnusedFastCalcArray
+            {
+                Set = buffer,
+                Count = possibilitySetSize
+            };
+        }
+        public List<FastCalcTile[]> GetGroupsForKey(GroupConf conf)
+        {
+            var list=new List<FastCalcTile[]>();
+            for(int i = 0; i < groups.Count; i++)
+            {
+                list.Add(groups[i].GetGroupForPossibilityKey(conf[i]));
+            }
+            return list;
         }
 
     }
