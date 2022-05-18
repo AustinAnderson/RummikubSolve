@@ -23,7 +23,7 @@ namespace SolverLogic
             }
             tileSet = new TileSet(boardTiles.Concat(handTiles).ToList());
         }
-        public async Task<int> Solve()
+        public async Task<SolveResult> Solve()
         {
             Stopwatch watch= new Stopwatch();
             watch.Start();
@@ -92,8 +92,8 @@ namespace SolverLogic
                     for (int j = lBound; j < uBound; j++)
                     {
                         var conf = confs[j];
-                        var (unusedSet, unusedCount) = groupIterable.GetUnusedForKey(conf);
-                        int currentScore = RunScorer.Score(baseUnusedFastCalcArray, unusedSet, unusedCount);
+                        var unused = groupIterable.GetUnusedForKey(conf);
+                        int currentScore = RunScorer.Score(baseUnusedFastCalcArray, ref unused);
                         if (currentScore < score)
                         {
                             score = currentScore;
@@ -117,8 +117,13 @@ namespace SolverLogic
                 Console.WriteLine("no solution found");
             }
             //with the solution key, pick that configuration of groups,
+            var allGroups= new MaxGroupIterable(groups);
+            var finalGroups=allGroups.GetGroupsForKey(solkey);
             //and now actually find the most possible runs with the remaining tiles
-            return finalScore;
+            var finalRuns = RunFinder.FindRuns(
+                baseUnusedFastCalcArray.Concat(allGroups.GetUnusedForKey(solkey).Trim()).ToList()
+            );
+            return new SolveResult(tileSet,finalGroups,finalRuns);
         }
     }
 }

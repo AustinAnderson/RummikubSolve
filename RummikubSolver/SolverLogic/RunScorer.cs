@@ -13,25 +13,24 @@ namespace SolverLogic
         //so for this set of tiles not already in groups, find the maximum runs we can
         //by zipping the two into a single list while checking how many are left, returning a "score" of the number left
         //golf rules
-        public static int Score (FastCalcTile[] baseUnused,FastCalcTile[] unusedFromSelectedGroups,int unusedFromGroupsCount)
+        public static int Score (FastCalcTile[] baseUnused,ref UnusedFastCalcArray unusedForSelected)
         {
-            if (unusedFromSelectedGroups.Length < unusedFromGroupsCount) throw new ArgumentException("list2 cap must be less than total allocated array size for list2");
             int score = 0;
             int it1 = 0;
             int it2 = 0;
             RunCalcState state = new RunCalcState();
             FastCalcTile current;
-            while(it1< baseUnused.Length && it2 < unusedFromGroupsCount)
+            while(it1< baseUnused.Length && it2 < unusedForSelected.Count)
             {
-                if ((int)baseUnused[it1] < (int)unusedFromSelectedGroups[it2])
+                if ((int)baseUnused[it1] < (int)unusedForSelected.Set[it2])
                 {
                     current = baseUnused[it1];
                     if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                     it1++;
                 }
-                else if((int)unusedFromSelectedGroups[it2]< (int)baseUnused[it1])
+                else if((int)unusedForSelected.Set[it2]< (int)baseUnused[it1])
                 {
-                    current = unusedFromSelectedGroups[it2];
+                    current = unusedForSelected.Set[it2];
                     if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                     it2++;
                 }
@@ -43,9 +42,9 @@ namespace SolverLogic
                 if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                 it1++;
             }
-            while (it2 < unusedFromGroupsCount)
+            while (it2 < unusedForSelected.Count)
             {
-                current = unusedFromSelectedGroups[it2];
+                current = unusedForSelected.Set[it2];
                 if (UpdateBreaking(ref score, current, ref state)) return int.MaxValue;
                 it2++;
             }

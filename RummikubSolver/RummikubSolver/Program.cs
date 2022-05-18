@@ -11,4 +11,14 @@ var solver = new Solver(
                 "5R,5Y,5T,5B").Split(new[] { ',', ' ' }).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new Tile(x.Trim())).ToList(),
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y".Split(",").Select(x => new Tile(x.Trim())).ToList()
 );
-Console.WriteLine("final score: "+ await solver.Solve());
+var res = await solver.Solve();
+foreach(var group in res.Groups)
+{
+    Console.WriteLine(string.Join(" ",group));
+}
+foreach(var run in res.Runs)
+{
+    Console.WriteLine(string.Join(" ", run));
+}
+Console.WriteLine("------------------------------------------------------------------");
+Console.WriteLine(string.Join("        ", res.Hand));
