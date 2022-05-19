@@ -26,7 +26,7 @@ namespace UnitTests
             tile.IsBoardTile = desc[2] == 'b';
             if(desc.Length > 3 && desc[3]=='*')
             {
-                tile.EquivalentHandTile = tile;
+                tile.EquivalentHandTileId = tile.Id;
             }
             return tile.ToFastCalcTile();
         }
