@@ -58,5 +58,23 @@ namespace UnitTests
             int currentScore = RunScorer.Score(baseUnused, ref arr);
             Assert.AreEqual(3, currentScore, "score should be 3");
         }
+        public void FindsScoreCorrectly2()
+        {
+            var baseUnused=new[] {
+                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+            }.Select(x=>RunTestUtil.MakeFastCalcTile(x)).ToArray();
+            var unusedCalc = new[] {//                                   V?
+                "4Bb", "4Rb", "4Th", "4Yh", "5Rb", "5Bb", "5Yh", "BBb", "BRb", "BYb", "CYb*",
+                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            }.Select(x=>RunTestUtil.MakeFastCalcTile(x)).ToArray();
+            var arr = new UnusedFastCalcArray
+            {
+                Set = unusedCalc,
+                Count = 11
+            };
+            int currentScore = RunScorer.Score(baseUnused, ref arr);
+            Assert.AreEqual(4, currentScore, "score should be 4");
+
+        }
     }
 }

@@ -77,21 +77,23 @@ namespace SolverLogic
                 currentPossibility++;
             }
 
-            int numThreads = 4;
+            int numThreads = 1;
             var tasks=new Task<(GroupConf,int)>[numThreads];
             int chunkSize=expectedPossibilitiesCount / numThreads;
+            int finalScore = 0;
+            GroupConf solkey = default;
             for(int i = 0; i < numThreads; i++)
             {
                 int lBound = i*chunkSize;
                 int uBound = (i+1)*chunkSize;
-                tasks[i] = Task.Run(() =>
-                {
+                //tasks[i] = Task.Run(() =>
+                //{
                     GroupConf solutionKey = default;
                     int score = int.MaxValue;
                     var groupIterable = new MaxGroupIterable(groups);
-                    for (int j = lBound; j < uBound; j++)
-                    {
-                        var conf = confs[j];
+                //for (int j = lBound; j < uBound; j++)
+                //{
+                var conf = new GroupConf(new[] { 5, 1, 1, 5, 0, 2, 1, 1, 1, 1, 0, 4, 1 });//confs[j];
                         var unused = groupIterable.GetUnusedForKey(conf);
                         int currentScore = RunScorer.Score(baseUnusedFastCalcArray, ref unused);
                         if (currentScore < score)
@@ -99,12 +101,14 @@ namespace SolverLogic
                             score = currentScore;
                             solutionKey = conf;
                         }
-                    }
-                    return (solutionKey, score);
-                });
+                    //}
+                finalScore = score;
+                solkey = solutionKey;
+                    //return (solutionKey, score);
+                //});
             }
-            var res=await Task.WhenAll(tasks);
-            var (solkey,finalScore)=res.OrderBy(x => x.Item2).First();
+            //var res=await Task.WhenAll(tasks);
+            //var (solkey,finalScore)=res.OrderBy(x => x.Item2).First();
             watch.Stop();
             Console.WriteLine("done in "+watch.Elapsed.TotalSeconds+ " seconds");
             if (finalScore < int.MaxValue)
