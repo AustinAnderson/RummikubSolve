@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace UnitTests
 {
-    public class RunTestUtil
+    public class TestTileSet
     {
-        public static FastCalcTile MakeFastCalcTile(string desc)
+        private int idCounter=0;
+        public FastCalcTile MakeFastCalcTile(string desc, bool includeId=true)
         {
             var num = desc[0] switch
             {
@@ -23,10 +24,14 @@ namespace UnitTests
             };
 
             var tile = new Tile(num + desc[1]);
+            if (includeId)
+            {
+                tile.Id = idCounter++;
+            }
             tile.IsBoardTile = desc[2] == 'b';
             if(desc.Length > 3 && desc[3]=='*')
             {
-                tile.EquivalentHandTileId = tile.Id;
+                tile.EquivalentHandTileId = 0;//calc just checks if null
             }
             return tile.ToFastCalcTile();
         }

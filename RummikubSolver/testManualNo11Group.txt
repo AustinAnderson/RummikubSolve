@@ -1,0 +1,52 @@
+
+            .6Yb .7Yb .8Yb .9Yb 10Yb 
+            .2Bb .3Bb .4Bb .5Bb .6Bb
+            12Bb 12Tb 12Rb 
+            11Bb 11Yb 11Rb 
+            10Bb 10Tb 10Yb
+            12Yb 12Tb 12Rb
+            .2Rb .3Rb .4Rb 
+            .8Bb .9Bb 10Bb 
+            .4Bb .4Tb .4Yb .4Rb
+            .1Bb .1Tb .1Yb 
+            .5Rb .5Yb .5Tb .5Bb
+
+        .2Yh .7Bh .9Bh .1Th .4Th .3Yh .5Yh 12Yh .1Rh .3Rh .9Rh .9Rh .8Rh .7Th .3Bh .4Yh
+
+
+        should find at least one solution simplest I can think of being
+
+            .6Yb .7Yb .8Yb .9Yb 10Yb 
+            .2Bb .3Bb .4Bb 
+            .3Bh .4Bb .5Bb .6Bb
+            12Bb 12Tb 12Rb 
+            11Bb 11Yb 11Rb 
+            10Bb 10Tb 10Yb
+            12Yb 12Tb 12Rb
+            .2Rb .3Rb .4Rb 
+            .8Bb .9Bb 10Bb 
+            .4Tb .4Yb .4Rb
+            .1Bb .1Tb .1Yb 
+            .5Rb .5Yb .5Tb .5Bb
+
+        .2Yh .7Bh .9Bh .1Th .4Th .3Yh .5Yh 12Yh .1Rh .3Rh .9Rh .9Rh .8Rh .7Th .4Yh
+
+
+
+            .6Yb .7Yb .8Yb .9Yb 10Yb 
+            .2Bb .3Bb .4Bb 
+            .3Bh .4Bb .5Bb .6Bb
+            .2Rb .3Rb .4Rb 
+            .8Bb .9Bb 10Bb 
+            .1Bb .1Tb .1Yb 
+            .4Tb .4Yb .4Rb
+            .5Rb .5Yb .5Tb .5Bb
+            11Bb 11Yb 11Rb 
+            10Bb 10Tb 10Yb
+            12Yb 12Tb 12Rb
+            12Bb 12Tb 12Rb 
+
+        .2Yh .7Bh .9Bh .1Th .4Th .3Yh .5Yh 12Yh .1Rh .3Rh .9Rh .9Rh .8Rh .7Th .4Yh
+
+
+

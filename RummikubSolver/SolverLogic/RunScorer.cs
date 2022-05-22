@@ -9,12 +9,31 @@ namespace SolverLogic
 {
     public class RunScorer
     {
+        public static bool skipValidation = false;
         //both unusedFromSelectedGroups and baseUnused should be sorted,
         //so for this set of tiles not already in groups, find the maximum runs we can
         //by zipping the two into a single list while checking how many are left, returning a "score" of the number left
         //golf rules
         public static int Score (FastCalcTile[] baseUnused,ref UnusedFastCalcArray unusedForSelected)
         {
+            if (!skipValidation)
+            {
+                FastCalcTile last = baseUnused[0];
+                for(int i = 1; i < baseUnused.Length; i++)
+                {
+                    if (last.Number > baseUnused[i].Number || (last.Number==baseUnused[i].Number && last.TileColor > baseUnused[i].TileColor)) 
+                        throw new ArgumentException("lists must be presorted",nameof(baseUnused));
+                    last = baseUnused[i];
+                }
+                last = unusedForSelected.Set[0];
+                for(int i = 1; i < unusedForSelected.Count; i++)
+                {
+                    if (last.Number > unusedForSelected.Set[i].Number || (last.Number==unusedForSelected.Set[i].Number && last.TileColor > unusedForSelected.Set[i].TileColor))
+                        throw new ArgumentException("lists must be presorted",nameof(unusedForSelected));
+                    last = unusedForSelected.Set[i];
+                }
+
+            }
             int score = 0;
             int it1 = 0;
             int it2 = 0;

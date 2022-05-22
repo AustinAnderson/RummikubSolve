@@ -14,29 +14,12 @@ namespace UnitTests
         [TestMethod]
         public void TestRunFound()
         {
-            var tiles= new[]
+            var testTileSet=new TestTileSet();
+            var tiles = new[]
             {
-                RunTestUtil.MakeFastCalcTile("1Th"),
-                RunTestUtil.MakeFastCalcTile("3Bh"),
-                RunTestUtil.MakeFastCalcTile("3Rh"),
-                RunTestUtil.MakeFastCalcTile("6Bb"),
-                RunTestUtil.MakeFastCalcTile("6Yb"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Rh"),
-                RunTestUtil.MakeFastCalcTile("ABb"),
-                RunTestUtil.MakeFastCalcTile("AYb"),
-
-                RunTestUtil.MakeFastCalcTile("4Bb"),
-                RunTestUtil.MakeFastCalcTile("4Rb"),
-                RunTestUtil.MakeFastCalcTile("4Th"),
-                RunTestUtil.MakeFastCalcTile("4Yh"),
-                RunTestUtil.MakeFastCalcTile("5Rb"),
-                RunTestUtil.MakeFastCalcTile("5Bb"),
-                RunTestUtil.MakeFastCalcTile("5Yh"),
-                RunTestUtil.MakeFastCalcTile("BBb"),
-                RunTestUtil.MakeFastCalcTile("BYb"),
-                RunTestUtil.MakeFastCalcTile("CYb*")
-            };
+                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb",
+                "4Bb", "4Rb", "4Th", "4Yh", "5Rb", "5Bb", "5Yh", "BBb", "BYb", "CYb*"
+            }.Select(x => testTileSet.MakeFastCalcTile(x, includeId: false)).ToArray();
             var results= RunFinder.FindRuns(tiles);
             var found=results.Runs.Select(x=>string.Join(",",x)).ToArray();
             var expectedRuns = new[]
@@ -47,16 +30,16 @@ namespace UnitTests
                 new[]{ "3Bh","4Bb","5Bb","6Bb"},
                 new[]{ "9Bh","ABb","BBb"}
 
-            }.Select(a=>string.Join(",",a.Select(x=>RunTestUtil.MakeFastCalcTile(x)))).ToArray();
+            }.Select(a=>string.Join(",",a.Select(x=>testTileSet.MakeFastCalcTile(x,includeId: false)))).ToArray();
             foreach(var expectedRun in expectedRuns)
             {
                 Assert.IsTrue(found.Contains(expectedRun),$"found is missing '{expectedRun}'");
             }
             var expectedHand= new[]
             {
-                RunTestUtil.MakeFastCalcTile("1Th"),
-                RunTestUtil.MakeFastCalcTile("4Th"),
-                RunTestUtil.MakeFastCalcTile("9Rh")
+                testTileSet.MakeFastCalcTile("1Th",includeId: false),
+                testTileSet.MakeFastCalcTile("4Th",includeId: false),
+                testTileSet.MakeFastCalcTile("9Rh",includeId: false)
             };
             Assert.AreEqual(string.Join(",", expectedHand), string.Join(",", results.Remainder));
         }
