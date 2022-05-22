@@ -9,7 +9,7 @@ namespace SolverLogic
 {
     internal class MaxGroupFinder
     {
-        public static List<MaxGroup> FindMaxGroups(TileSet tileSet, out List<Tile> groupBaseUnused)
+        public static List<MaxGroup> FindMaxGroups(TileSetForCurrentHand tileSet, out List<Tile> groupBaseUnused)
         {
             //tileset is always a sorted list
             //pull out all the dups and put them on the end
