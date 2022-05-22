@@ -29,10 +29,10 @@ namespace UnitTests
         public static IEnumerable<Tile> TileExcept(this IEnumerable<Tile> tiles,IEnumerable<Tile> excepts)
         {
             var result=new List<Tile>();
-            var exceptsStr = new HashSet<string>(excepts.Select(x => x.ToString()));
+            var exceptsStr = new HashSet<string>(excepts.Select(x => x.DebugDisplay));
             foreach (var tile in tiles)
             {
-                if (!exceptsStr.Contains(tile.ToString()))
+                if (!exceptsStr.Contains(tile.DebugDisplay))
                 {
                     result.Add(tile);
                 }

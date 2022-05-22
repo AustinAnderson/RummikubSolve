@@ -14,59 +14,16 @@ namespace UnitTests
     {
         
         [TestMethod]
-        public void FindsScoreCorrectly()
+        public void ValidIfHandUnused()
         {
-            var baseUnused = new[]
-            {
-                RunTestUtil.MakeFastCalcTile("1Th"),
-                RunTestUtil.MakeFastCalcTile("3Bh"),
-                RunTestUtil.MakeFastCalcTile("3Rh"),
-                RunTestUtil.MakeFastCalcTile("6Bb"),
-                RunTestUtil.MakeFastCalcTile("6Yb"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Rh"),
-                RunTestUtil.MakeFastCalcTile("ABb"),
-                RunTestUtil.MakeFastCalcTile("AYb"),
-            };
-            var currentPossibilitySetUnused = new[]
-            {
-                RunTestUtil.MakeFastCalcTile("4Bb"),
-                RunTestUtil.MakeFastCalcTile("4Rb"),
-                RunTestUtil.MakeFastCalcTile("4Th"),
-                RunTestUtil.MakeFastCalcTile("4Yh"),
-                RunTestUtil.MakeFastCalcTile("5Rb"),
-                RunTestUtil.MakeFastCalcTile("5Bb"),
-                RunTestUtil.MakeFastCalcTile("5Yh"),
-                RunTestUtil.MakeFastCalcTile("BBb"),
-                RunTestUtil.MakeFastCalcTile("BYb"),
-                RunTestUtil.MakeFastCalcTile("CYb*"),
-
-
-
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-                RunTestUtil.MakeFastCalcTile("9Bh"),
-            };
-            var arr = new UnusedFastCalcArray
-            {
-                Set = currentPossibilitySetUnused,
-                Count = 10
-            };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(3, currentScore, "score should be 3");
-        }
-        public void FindsScoreCorrectly2()
-        {
+            var testTileSet=new TestTileSet();
             var baseUnused=new[] {
                 "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
-            }.Select(x=>RunTestUtil.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                   V?
-                "4Bb", "4Rb", "4Th", "4Yh", "5Rb", "5Bb", "5Yh", "BBb", "BRb", "BYb", "CYb*",
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
+            var unusedCalc = new[] {//                                   V valid because would be left over, but originally came from the hand
+                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRh", "BYb", "CYb*",
                 "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
-            }.Select(x=>RunTestUtil.MakeFastCalcTile(x)).ToArray();
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
             var arr = new UnusedFastCalcArray
             {
                 Set = unusedCalc,
@@ -74,7 +31,68 @@ namespace UnitTests
             };
             int currentScore = RunScorer.Score(baseUnused, ref arr);
             Assert.AreEqual(4, currentScore, "score should be 4");
+        }
+        [TestMethod]
+        public void ValidIfBoardUnusedWithHandEquivalent()
+        {
+            var testTileSet=new TestTileSet();
+            var baseUnused=new[] {
+                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
+            var unusedCalc = new[] {//                                   V? valid because would be left over but can be subbed for one in the hand
+                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRb*", "BYb", "CYb*",
+                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
+            var arr = new UnusedFastCalcArray
+            {
+                Set = unusedCalc,
+                Count = 11
+            };
+            int currentScore = RunScorer.Score(baseUnused, ref arr);
+            Assert.AreEqual(4, currentScore, "score should be 4");
+        }
+        [TestMethod]
+        public void InvalidIfBoardUnused()
+        {
+            var testTileSet=new TestTileSet();
+            var baseUnused=new[] {
+                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
+            var unusedCalc = new[] {//                                   V invalid because would be left over, and originally came from the board
+                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRb", "BYb", "CYb*",
+                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
+            var arr = new UnusedFastCalcArray
+            {
+                Set = unusedCalc,
+                Count = 11
+            };
+            int currentScore = RunScorer.Score(baseUnused, ref arr);
+            Assert.AreEqual(int.MaxValue, currentScore, "score should be max int because it leaves unused board tiles");
 
+        }
+        [TestMethod]
+        public void TestThatOneCaseThatFailed()
+        {
+            var testTileSet=new TestTileSet();
+            var baseUnused = new[] {
+                "1Th",  "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+            }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
+            var unusedCalc = new[] {
+                "1Rh", "2Bb", "2Rb", "2Yh", "3Bb*", "3Rb*", "3Yh",
+                "4Bb", "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Yh",
+                "7Bh", "7Th", "7Yb", "8Bb", "8Rh", "8Yb",
+                "9Bb*", "9Rh", "9Yb", "CYb*",
+
+                "9Bb*", "9Rh", "9Yb", "CYb*"
+            }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
+            var arr = new UnusedFastCalcArray
+            {
+                Set = unusedCalc,
+                Count = 24
+            };
+            int currentScore = RunScorer.Score(baseUnused, ref arr);
+            Assert.AreEqual(15, currentScore, "score should be 15");
         }
     }
 }

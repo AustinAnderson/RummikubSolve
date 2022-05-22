@@ -93,7 +93,7 @@ namespace SolverLogic
                     var groupIterable = new MaxGroupIterable(groups);
                 //for (int j = lBound; j < uBound; j++)
                 //{
-                var conf = new GroupConf(new[] { 5, 1, 1, 5, 0, 2, 1, 1, 1, 1, 0, 4, 1 });//confs[j];
+                var conf = new GroupConf(new[] {2,0,0,1,0,5,0,0,0,1,1,4,1});//confs[j];
                         var unused = groupIterable.GetUnusedForKey(conf);
                         int currentScore = RunScorer.Score(baseUnusedFastCalcArray, ref unused);
                         if (currentScore < score)
