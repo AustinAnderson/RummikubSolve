@@ -46,11 +46,12 @@ namespace SolverLogic.Models
         public bool IsBoardTile { get; set; }
         public int Number { get; private set; }
         public int Id { get; set; }
+        public int Originality { get; set; }
         public TileColor Color { get; private set; }
         public bool IsJoker { get; private set; }
         public FastCalcTile ToFastCalcTile()
         {
-            return new FastCalcTile((byte)Number,Color,IsBoardTile,EquivalentHandTileId!=null,(ushort)Id);
+            return new FastCalcTile((byte)Originality, (byte)Number,Color,IsBoardTile,EquivalentHandTileId!=null,(ushort)Id);
         }
         public static bool operator < (Tile l, Tile r) => Comparer.Compare(l, r) < 0;
         public static bool operator > (Tile l, Tile r) => Comparer.Compare(l, r) > 0;

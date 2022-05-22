@@ -28,7 +28,7 @@ namespace SolverLogic.Models
                 }
             }
         }
-        internal SolveResult(TileSet allTiles,List<FastCalcTile[]> finalGroups, RunsAndRemainder finalRuns)
+        internal SolveResult(TileSetForCurrentHand allTiles,List<FastCalcTile[]> finalGroups, RunsAndRemainder finalRuns)
         {
             var tilesById = allTiles.Tiles.ToDictionary(t => t.Id, t => new RefTile(t));
             foreach(var refTile in tilesById.Values)

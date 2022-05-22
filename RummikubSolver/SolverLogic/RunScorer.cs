@@ -21,14 +21,16 @@ namespace SolverLogic
                 FastCalcTile last = baseUnused[0];
                 for(int i = 1; i < baseUnused.Length; i++)
                 {
-                    if (last.Number > baseUnused[i].Number || (last.Number==baseUnused[i].Number && last.TileColor > baseUnused[i].TileColor)) 
+                    //if (last.Number > baseUnused[i].Number || (last.Number==baseUnused[i].Number && last.TileColor > baseUnused[i].TileColor)) 
+                    if ((int)last > (int)baseUnused[i])
                         throw new ArgumentException("lists must be presorted",nameof(baseUnused));
                     last = baseUnused[i];
                 }
                 last = unusedForSelected.Set[0];
                 for(int i = 1; i < unusedForSelected.Count; i++)
                 {
-                    if (last.Number > unusedForSelected.Set[i].Number || (last.Number==unusedForSelected.Set[i].Number && last.TileColor > unusedForSelected.Set[i].TileColor))
+                    //if (last.Number > unusedForSelected.Set[i].Number || (last.Number==unusedForSelected.Set[i].Number && last.TileColor > unusedForSelected.Set[i].TileColor))
+                    if ((int)last > (int)unusedForSelected.Set[i])
                         throw new ArgumentException("lists must be presorted",nameof(unusedForSelected));
                     last = unusedForSelected.Set[i];
                 }

@@ -18,11 +18,11 @@ namespace UnitTests
         {
             var testTileSet=new TestTileSet();
             var baseUnused=new[] {
-                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                   V valid because would be left over, but originally came from the hand
-                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRh", "BYb", "CYb*",
-                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            var unusedCalc = new[] {//                                                   V? valid because would be left over but came from the hand
+                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRh_0", "BYb_0", "CYb*_0",
+                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
             var arr = new UnusedFastCalcArray
             {
@@ -37,11 +37,11 @@ namespace UnitTests
         {
             var testTileSet=new TestTileSet();
             var baseUnused=new[] {
-                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                   V? valid because would be left over but can be subbed for one in the hand
-                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRb*", "BYb", "CYb*",
-                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            var unusedCalc = new[] {//                                                   V? valid because would be left over but can be subbed for one in the hand
+                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb*0", "BYb_0", "CYb*_0",
+                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
             var arr = new UnusedFastCalcArray
             {
@@ -56,11 +56,11 @@ namespace UnitTests
         {
             var testTileSet=new TestTileSet();
             var baseUnused=new[] {
-                "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                   V invalid because would be left over, and originally came from the board
-                "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Rb", "5Yh", "BBb", "BRb", "BYb", "CYb*",
-                "9Bh", "9Bh", "9Bh", "9Bh", "9Bh",
+            var unusedCalc = new[] {//                                                   V invalid because would be left over, and originally came from the board
+                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb_0", "BYb_0", "CYb*_0",
+                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
             }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
             var arr = new UnusedFastCalcArray
             {
@@ -76,14 +76,16 @@ namespace UnitTests
         {
             var testTileSet=new TestTileSet();
             var baseUnused = new[] {
-                "1Th",  "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb"
+                "1Th_0",  "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
             }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
             var unusedCalc = new[] {
-                "1Rh", "2Bb", "2Rb", "2Yh", "3Bb*", "3Rb*", "3Yh",
-                "4Bb", "4Bb", "4Rb", "4Th", "4Yh", "5Bb", "5Yh",
-                "7Bh", "7Th", "7Yb", "8Bb", "8Rh", "8Yb",
-                "9Bb*", "9Rh", "9Yb", "CYb*",
+                "1Rh_0", "2Bb_0", "2Rb_0", "2Yh_0", "3Yh_0",
+                "4Bb_0", "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Yh_0",
+                "7Bh_0", "7Th_0", "7Yb_0", "8Bb_0", "8Rh_0", "8Yb_0",
+                "9Yb_0", "CYb*0",
+                "3Bb*1", "3Rb*1", "9Bb*1", "9Rh_1", 
 
+                //simulated junk
                 "9Bb*", "9Rh", "9Yb", "CYb*"
             }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
             var arr = new UnusedFastCalcArray

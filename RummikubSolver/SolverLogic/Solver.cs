@@ -10,18 +10,10 @@ namespace SolverLogic
 {
     public class Solver
     {
-        private TileSet tileSet;
-        public Solver(List<Tile> boardTiles, List<Tile> handTiles)
+        private TileSetForCurrentHand tileSet;
+        public Solver(TileSetForCurrentHand tileSet)
         {
-            foreach(var tile in boardTiles)
-            {
-                tile.IsBoardTile = true;
-            }
-            foreach(var handTile in handTiles)
-            {
-                handTile.IsBoardTile = false;
-            }
-            tileSet = new TileSet(boardTiles.Concat(handTiles).ToList());
+            this.tileSet = tileSet;
         }
         public async Task<SolveResult> Solve()
         {

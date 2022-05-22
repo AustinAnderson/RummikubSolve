@@ -24,14 +24,20 @@ namespace UnitTests
             };
 
             var tile = new Tile(num + desc[1]);
+
             if (includeId)
             {
+
                 tile.Id = idCounter++;
             }
             tile.IsBoardTile = desc[2] == 'b';
             if(desc.Length > 3 && desc[3]=='*')
             {
                 tile.EquivalentHandTileId = 0;//calc just checks if null
+            }
+            if(desc.Length > 4 && int.TryParse(""+desc[4],out var originality))
+            {
+                tile.Originality = originality;
             }
             return tile.ToFastCalcTile();
         }
