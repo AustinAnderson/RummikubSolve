@@ -1,100 +1,151 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SolverLogic;
 using SolverLogic.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnitTests;
 
-namespace UnitTests
+namespace TestRunCalc
 {
+    public static class RunCalcTestUtil
+    {
+        public static void AssertCorrectScoreFound(int expectedScore, string[] baseUnused, string[] unusedCalc)
+        {
+            var testTileSet=new TestTileSet();
+            var arr = new UnusedFastCalcArray
+            {
+                Set = unusedCalc.Concat(new[] { 
+                    "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
+                }).Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray(),
+                Count = unusedCalc.Length,
+            };
+            int currentScore = new RunScorer().Score(baseUnused.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray(), ref arr);
+            Assert.AreEqual(expectedScore, currentScore, $"score should be {expectedScore}");
+
+        }
+    }
     [TestClass]
-    public class TestRunCalc
+    public class TestHandOrBoardValidity
     {
         
         [TestMethod]
         public void ValidIfHandUnused()
         {
-            var testTileSet=new TestTileSet();
-            var baseUnused=new[] {
-                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                                   V? valid because would be left over but came from the hand
-                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRh_0", "BYb_0", "CYb*_0",
-                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var arr = new UnusedFastCalcArray
-            {
-                Set = unusedCalc,
-                Count = 11
-            };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(4, currentScore, "score should be 4");
+            RunCalcTestUtil.AssertCorrectScoreFound(4,
+                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
+                //                      valid because would be left over but came from the hand
+                new[] {//                                                                     |
+                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRh_0", "BYb_0", "CYb*_0",
+                }
+            );
         }
         [TestMethod]
         public void ValidIfBoardUnusedWithHandEquivalent()
         {
-            var testTileSet=new TestTileSet();
-            var baseUnused=new[] {
-                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                                   V? valid because would be left over but can be subbed for one in the hand
-                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb*0", "BYb_0", "CYb*_0",
-                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var arr = new UnusedFastCalcArray
-            {
-                Set = unusedCalc,
-                Count = 11
-            };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(4, currentScore, "score should be 4");
+            RunCalcTestUtil.AssertCorrectScoreFound(4,
+                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
+                //       valid because would be left over but can be subbed for one in the hand
+                new[] {//                                                                     |
+                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb*0", "BYb_0", "CYb*_0",
+                }
+            );
         }
         [TestMethod]
         public void InvalidIfBoardUnused()
         {
-            var testTileSet=new TestTileSet();
-            var baseUnused=new[] {
-                "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {//                                                   V invalid because would be left over, and originally came from the board
-                "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb_0", "BYb_0", "CYb*_0",
-                "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
-            }.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray();
-            var arr = new UnusedFastCalcArray
-            {
-                Set = unusedCalc,
-                Count = 11
-            };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(int.MaxValue, currentScore, "score should be max int because it leaves unused board tiles");
-
+            RunCalcTestUtil.AssertCorrectScoreFound(int.MaxValue,
+                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
+                //        invalid because would be left over, and originally came from the board
+                new[] {//                                                                      |
+                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb_0", "BYb_0", "CYb*_0",
+                }
+            );
         }
         [TestMethod]
         public void TestThatOneCaseThatFailed()
         {
-            var testTileSet=new TestTileSet();
-            var baseUnused = new[] {
-                "1Th_0",  "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0"
-            }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
-            var unusedCalc = new[] {
-                "1Rh_0", "2Bb_0", "2Rb_0", "2Yh_0", "3Yh_0",
-                "4Bb_0", "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Yh_0",
-                "7Bh_0", "7Th_0", "7Yb_0", "8Bb_0", "8Rh_0", "8Yb_0",
-                "9Yb_0", "CYb*0",
-                "3Bb*1", "3Rb*1", "9Bb*1", "9Rh_1", 
+            RunCalcTestUtil.AssertCorrectScoreFound(15,
+                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
+                new[] {
+                    "1Rh_0", "2Bb_0", "2Rb_0", "2Yh_0", "3Yh_0",
+                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Yh_0",
+                    "7Bh_0", "7Th_0", "7Yb_0", "8Bb_0", "8Rh_0", "8Yb_0",
+                    "9Yb_0", "CYb*0",
+                    "3Bb*1", "3Rb*1", "4Bb_1", "9Bb*1", "9Rh_1",
+                }
+            );
+        }
+    }
+    [TestClass]
+    public class Test2Dups
+    {
+        [TestMethod]
+        public void DupsHigh()
+        {
+            //2B 3B
+            //4B 5B 6B
+            RunCalcTestUtil.AssertCorrectScoreFound(2,
+                new[] { "2Bb_0", "3Bb_0", "4Bb_0", "5Bb*0", "6Bb*0"  },
+                new[] { "5Bh_1", "6Bh_1" }
+            );
+        }
+        [TestMethod]
+        public void DupsMid()
+        {
+            //1B 2B 3B 4B 
+            //3B 4B 5B 6B
+            RunCalcTestUtil.AssertCorrectScoreFound(0,
+                new[] { "1Bh_0", "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0", "6Bb_0"  },
+                new[] { "3Bh_1", "4Bh_1" }
+            );
+        }
+        [TestMethod]
+        public void DupsLow()
+        {
+            //2B 3B 
+            //2B 3B 4B 5B 6B
+            RunCalcTestUtil.AssertCorrectScoreFound(2,
+                new[] { "2Bb*0", "3Bb*0", "4Bb_0", "5Bb_0", "6Bb_0" },
+                new[] { "2Bh_1", "3Bh_1" }
+            );
+        }
+    }
+    [TestClass]
+    public class Test3Dups
+    {
+        [TestMethod]
+        public void DupsHigh()
+        {
+            RunCalcTestUtil.AssertCorrectScoreFound(0,
+                new[] { "2Bb_0", "3Bb_0", "4Bb_0", "5Bb*0", "6Bb*0"  },
+                new[] { "4Bh_1", "5Bh_1", "6Bh_1" }
+            );
+        }
+        [TestMethod]
+        public void DupsMid()
+        {
+            //1B 2B 3B 4B 
+            //3B 4B 5B 6B
+            RunCalcTestUtil.AssertCorrectScoreFound(0,
+                new[] { "1Bh_0", "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0", "6Bb_0"  },
+                new[] { "2Bh_1", "3Bh_1", "4Bh_1" }
+            );
+        }
+        [TestMethod]
+        public void DupsLow()
+        {
+            //should get
+            //2B 3B
+            //5B
+            //2B 3B 4B 5B 6B
 
-                //simulated junk
-                "9Bb*", "9Rh", "9Yb", "CYb*"
-            }.Select(x => testTileSet.MakeFastCalcTile(x)).ToArray();
-            var arr = new UnusedFastCalcArray
-            {
-                Set = unusedCalc,
-                Count = 24
-            };
-            int currentScore = RunScorer.Score(baseUnused, ref arr);
-            Assert.AreEqual(15, currentScore, "score should be 15");
+            //but will get
+            //2B 3B 4B 5B
+            //2B 3B
+            //5B 6B
+            RunCalcTestUtil.AssertCorrectScoreFound(3,
+                new[] { "2Bb*0", "3Bb*0", "4Bb_0", "5Bb*0", "6Bb_0" },
+                new[] { "2Bh_1", "3Bh_1", "5Bh_1"}
+            );
         }
     }
 }

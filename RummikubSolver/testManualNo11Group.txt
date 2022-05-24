@@ -33,20 +33,111 @@
 
 
 
-            .6Yb .7Yb .8Yb .9Yb 10Yb 
+        current sort base algo fails becuase
             .2Bb .3Bb .4Bb 
             .3Bh .4Bb .5Bb .6Bb
-            .2Rb .3Rb .4Rb 
-            .8Bb .9Bb 10Bb 
-            .1Bb .1Tb .1Yb 
-            .4Tb .4Yb .4Rb
-            .5Rb .5Yb .5Tb .5Bb
-            11Bb 11Yb 11Rb 
-            10Bb 10Tb 10Yb
-            12Yb 12Tb 12Rb
-            12Bb 12Tb 12Rb 
 
-        .2Yh .7Bh .9Bh .1Th .4Th .3Yh .5Yh 12Yh .1Rh .3Rh .9Rh .9Rh .8Rh .7Th .4Yh
+        sees either
+            (.2Bb .3Bb .4Bb .5Bb .6Bb) ( .3Bh .4Bb )
+        or
+            .2Bb .3Bb .3Bb .4Bb 4Bb .5Bb .6Bb; with the second 3B ending the chain
+
+    rummikub has at most 2 of each tile, but relying on that screws up the idea of just solving with subbed jokers,
+    but up to two jokers, so maybe just 4 dup arrays
+    maybe fill runs, switch to next dup array when encountering dup, move originality to least sig
+    if 3, switch to filling dup set
+    could allocate one block of this per thread pass by ref to runCalcer,
+    b  
+    b1 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    b2 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    b3 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    r  [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    r1 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    r2 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    r3 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    t  [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    t1 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    t2 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    t3 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    y  [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    y1 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    y2 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+    y3 [1,2,3,4,5,6,7,8,9,A,B,C,D]
+
+                      sees first filled and second still running, move to second
+    so 2B 3B    4B    |
+             3B    4B 5B 6B
+
+    what about more than 2 dups:
+    2B 3B 3B 4B 4B 5B 5B 6B 6B 7B 8B 9B
+
+    2B 3B    4B;
+          3B    4B 5B;
+                      5B 6B
+                            6B 7B 8B 9B
+
+    doesnt work :(
+
+    is the problem still there going backwards?
+        sees either
+            (.2Bb .3Bb .4Bb .5Bb .6Bb) ( .3Bh .4Bb )
+        or
+            .2Bb .3Bb (.3Bb .4Bb) (4Bb .5Bb .6Bb); with the second 4B/3B ending the chain
+    so yeah
+
+    what about with sorted queues one per dup set per color
+          .2B .3Bh .4Bb .5Bb .6Bb
+
+          .3Bb .4Bb 
+    still has same problem not knowing to put 2 with the dup 3 and 4
+
+    graph theory?
+
+    3 - 4 ----
+    |          \
+    2 - 3 - 4 - 5 - 6
+
+    know we need to use the lowest currently not visited
+
+           6 - 7 -----
+    2-3    |\______    \
+           |       \   |
+           5 - 6 - 7 - 8 - 9    B-C
+
+    if a node in a traversed path has two or more incomming links, stop before that?
+    nah 7 on the lower path would stop early
+
+           6 - 7 -------
+    2-3    | \______     \
+           |        \    |
+           5 -. 6 -. 7 - 8 - 9    B-C
+
+   .2Bb .3Bb .4Bb .5Bb .6Bb .3Bb .4Bb 
+   dups from the back look for lower num,
+   then after dups done,
+   go from front
+
+   cases, dups are in middle, dups dup lowest, dups dup highest
+   .2Bb .3Bb .4Bb .5Bb .6Bb .3Bb' .4Bb' works
+   .3Bb .4Bb .5Bb .6Bb .3Bb' .4Bb' works
+   .3Bb .4Bb .5Bb .6Bb .5Bb' .6Bb' works
+
+          v    v
+   .1Bb .3Bb .4Bb .5Bb .6Bb .7Bb .5Bb' .6Bb'
+   1B    3B 4B 5B' 6B'    5B 6B 7B
+
+   TODO: change tests to enumerate all classes of possibilities
+
+   k
 
 
+   2 - 3 - 4 - 5 - 6
+     X   / |      /
+   2 - 3   5-----'
+
+
+   1 - 2 - 3 - 4 - 5 - 6
+       2 - 3 - 4
+
+ starting to think the dups make it np hard, but not willing to try to prove it,
 

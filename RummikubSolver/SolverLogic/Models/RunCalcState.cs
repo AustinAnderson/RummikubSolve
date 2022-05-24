@@ -64,7 +64,7 @@ namespace SolverLogic.Models
             {
                 chainIsRunBreakingIfUnused[i] = false;
                 lastForColor[i] = FastCalcTile.MaxValue;
-                chainScore[i] = 1;
+                chainScore[i] = 0;
             }
         }
         public override string ToString() =>
