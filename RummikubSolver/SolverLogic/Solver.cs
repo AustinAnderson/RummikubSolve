@@ -80,6 +80,7 @@ namespace SolverLogic
                 int uBound = (i+1)*chunkSize;
                 //tasks[i] = Task.Run(() =>
                 //{
+                    RunScorer scorer=new RunScorer();
                     GroupConf solutionKey = default;
                     int score = int.MaxValue;
                     var groupIterable = new MaxGroupIterable(groups);
@@ -87,7 +88,7 @@ namespace SolverLogic
                 //{
                 var conf = new GroupConf(new[] {2,0,0,1,0,5,0,0,0,1,1,4,1});//confs[j];
                         var unused = groupIterable.GetUnusedForKey(conf);
-                        int currentScore = RunScorer.Score(baseUnusedFastCalcArray, ref unused);
+                        int currentScore = scorer.Score(baseUnusedFastCalcArray, ref unused);
                         if (currentScore < score)
                         {
                             score = currentScore;
