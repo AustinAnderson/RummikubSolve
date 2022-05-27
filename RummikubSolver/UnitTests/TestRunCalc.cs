@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SolverLogic;
 using SolverLogic.Models;
+using System.Collections.Specialized;
 using System.Linq;
 using UnitTests;
 
@@ -63,7 +64,11 @@ namespace TestRunCalc
         [TestMethod]
         public void TestThatOneCaseThatFailed()
         {
-            RunCalcTestUtil.AssertCorrectScoreFound(15,
+            //B (2 3 4 5 6 7 8 9 A) (3 4) (9)
+            //R (1 2 3 4) (8 9) (3) (9)
+            //T (1) (4) (7) 
+            //Y (2 3 4 5 6 7 8 9 A) (C)
+            RunCalcTestUtil.AssertCorrectScoreFound(11,
                 new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
                 new[] {
                     "1Rh_0", "2Bb_0", "2Rb_0", "2Yh_0", "3Yh_0",
@@ -91,10 +96,10 @@ namespace TestRunCalc
         [TestMethod]
         public void DupsMid()
         {
-            //1B 2B 3B 4B 
-            //3B 4B 5B 6B
+            //2B 3B 4B 
+            //3B 4B 5B 
             RunCalcTestUtil.AssertCorrectScoreFound(0,
-                new[] { "1Bh_0", "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0", "6Bb_0"  },
+                new[] { "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0" },
                 new[] { "3Bh_1", "4Bh_1" }
             );
         }
@@ -143,9 +148,13 @@ namespace TestRunCalc
             //2B 3B
             //5B 6B
             RunCalcTestUtil.AssertCorrectScoreFound(3,
-                new[] { "2Bb*0", "3Bb*0", "4Bb_0", "5Bb*0", "6Bb_0" },
-                new[] { "2Bh_1", "3Bh_1", "5Bh_1"}
+                new[] { "2Bb*0", "3Bb*0", "4Bb_0", 
+                    "5Bb*0", "6Bb_0" },
+                new[] { "2Bh_1", "3Bh_1", 
+                    "5Bh_1"}
             );
+            //just trying all combinations of 3 partions with mini's no good since
+            // 1 23 4   wouldn't be hit
         }
     }
 }

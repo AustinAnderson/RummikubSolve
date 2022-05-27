@@ -8,6 +8,11 @@ namespace SolverLogic.Models
 {
     public struct BitVector128
     {
+        public BitVector128(uint val)
+        {
+            low = val;
+            high = 0;
+        }
         private ulong high;
         private ulong low;
         public void Clear()

@@ -112,183 +112,43 @@ namespace SolverLogic
         //golf rules
         public int Score (FastCalcTile[] baseUnused,ref UnusedFastCalcArray unusedForSelected)
         {
-            removed.Clear();
-            if (!skipValidation)
+            var listsPerColor = new[]
             {
-                FastCalcTile last = baseUnused[0];
-                for(int i = 1; i < baseUnused.Length; i++)
-                {
-                    if ((int)last > (int)baseUnused[i])
-                        throw new ArgumentException("lists must be presorted",nameof(baseUnused));
-                    last = baseUnused[i];
-                }
-                last = unusedForSelected.Set[0];
-                for(int i = 1; i < unusedForSelected.Count; i++)
-                {
-                    if ((int)last > (int)unusedForSelected.Set[i])
-                        throw new ArgumentException("lists must be presorted",nameof(unusedForSelected));
-                    last = unusedForSelected.Set[i];
-                }
-
-            }
-            RunCalcState state = new RunCalcState();
-            int score=IterateBackwardsThroughDups(baseUnused, ref unusedForSelected);
-            if (score == int.MaxValue) return score;
-            int ndx = 0;
-            foreach(var current in new SortZipEnumerable(baseUnused, ref unusedForSelected, false))
+                new List<int>{ },
+                new List<int>{ },
+                new List<int>{ },
+                new List<int>{ }
+            };
+            foreach(var tile in new SortZipEnumerable(baseUnused,ref unusedForSelected, false))
             {
-                if (!removed[ndx] && UpdateBreaking(ref score, current, ref state)) 
-                    return int.MaxValue;
-                ndx++;
+                listsPerColor[((int)tile.TileColor)].Add(tile.Number);
             }
-            for(int i = 0; i < 4; i++)
-            {
-                if(state.chainScore[i] < 3)
-                {
-                    if (state.chainIsRunBreakingIfUnused[i])
-                    {
-                        return int.MaxValue;
-                    }
-                    score+= state.chainScore[i];
-                }
-            }
-            return score;
-        }
-
-
-        /*
-y
-                 t                                b     y  r
-v                    v                                v     v  v
-1T 2T 3B 3R 4B 4R 4T 4Y 5B 5R 5Y 6B 6Y 9B 9R JB JY QB QY KY KR
- 2        2  2        3  3  2  4   3        2     3  2  3
-*/
-        private bool UpdateBreaking(ref int score, FastCalcTile current, ref RunCalcState state)
-        {
-            int colorNdx = (int)current.TileColor;
-            if((int)state.lastForColor[colorNdx] == (int)FastCalcTile.MaxValue)
-            {
-                state.chainIsRunBreakingIfUnused[colorNdx] = current.IsInvalidIfUnused;
-                state.chainScore[colorNdx] = 1;
-            }
-            else
-            {
-                if(current.Number == state.lastForColor[colorNdx].Number + 1)
-                {
-                    state.chainScore[colorNdx]++;
-                    state.chainIsRunBreakingIfUnused[colorNdx] |= current.IsInvalidIfUnused;
-                    state.lastForColor[colorNdx] = current;
-                }
-                else
-                {
-                    if(state.chainScore[colorNdx] < 3)
-                    {
-                        if (state.chainIsRunBreakingIfUnused[colorNdx])
-                        {
-                            return true;
-                        }
-                        score+=state.chainScore[colorNdx];
-                    }
-                    state.chainScore[colorNdx] = 1;
-                    state.chainIsRunBreakingIfUnused[colorNdx]=current.IsInvalidIfUnused;
-                }
-            }
-            state.lastForColor[colorNdx] = current;
-            return false;
-        }
-        private int IterateBackwardsThroughDups(FastCalcTile[] baseUnused, ref UnusedFastCalcArray unusedForSelected)
-        {
             int score = 0;
-            RunCalcState state = new RunCalcState();
-            int ndx = baseUnused.Length + unusedForSelected.Count - 1;
-            var enumerable = new SortZipEnumerable(baseUnused, ref unusedForSelected, true);
-            foreach(var current in enumerable)
+            foreach(var list in listsPerColor)
             {
-
-                if (current.Originality == 0)
-                {
-                    break;
-                }
-                removed[ndx] = true;
-                if (UpdateBreakingReverse(ref score, current, ref state, ndx, enumerable))
-                {
-                    return int.MaxValue;
-                }
-                ndx--;
+                score += ScoreList(list);
             }
-            for(int i = 0; i < 4; i++)
-            {
-                if(state.chainScore[i] < 3)
-                {
-                    int needToFind = state.lastForColor[i].Number-1;
-                    //iterate down from the current original enumerable's state to see if any match to complete the run
-                    foreach(var tile in new SortZipEnumerable(enumerable))
-                    {
-                        if(tile.Number==needToFind && tile.TileColor == (TileColor)i)
-                        {
-                            removed[ndx] = true;
-                            needToFind = tile.Number - 1;
-                        }
-                        ndx--;
-                    }
-                    if (needToFind == state.lastForColor[i].Number - 1)
-                    {
-                        if (state.chainIsRunBreakingIfUnused[i])
-                        {
-                            return int.MaxValue;
-                        }
-                        score += state.chainScore[i];
-                    }
-                }
-            }
-            return score;
+            return 0;
         }
-        private bool UpdateBreakingReverse(ref int score, FastCalcTile current, ref RunCalcState state, int currentNdx, SortZipEnumerable original)
+        public int ScoreList(List<int> numbers)
         {
-            int colorNdx = (int)current.TileColor;
-            if((int)state.lastForColor[colorNdx] == (int)FastCalcTile.MaxValue)
+            List<List<int>> possibleRuns = new List<List<int>>();
+            foreach(var number in numbers)
             {
-                state.chainIsRunBreakingIfUnused[colorNdx] = current.IsInvalidIfUnused;
-                state.chainScore[colorNdx] = 1;
-            }
-            else
-            {
-                if(current.Number == state.lastForColor[colorNdx].Number - 1)
+                int top = possibleRuns.LastOrDefault()?.LastOrDefault()??default;
+                if(top!=0&&top+1 == number)
                 {
-                    state.chainScore[colorNdx]++;
-                    state.chainIsRunBreakingIfUnused[colorNdx] |= current.IsInvalidIfUnused;
-                    state.lastForColor[colorNdx] = current;
+                    possibleRuns.Last().Add(number);
                 }
                 else
                 {
-                    if(state.chainScore[colorNdx] < 3)
-                    {
-                        int needToFind = state.lastForColor[colorNdx].Number-1;
-                        //iterate down from the current original enumerable's state to see if any match to complete the run
-                        foreach(var tile in new SortZipEnumerable(original))
-                        {
-                            if(tile.Number==needToFind && tile.TileColor == current.TileColor)
-                            {
-                                removed[currentNdx] = true;
-                                needToFind = tile.Number - 1;
-                            }
-                            currentNdx--;
-                        }
-                        if (needToFind == state.lastForColor[colorNdx].Number - 1)
-                        {
-                            if (state.chainIsRunBreakingIfUnused[colorNdx])
-                            {
-                                return true;
-                            }
-                            score += state.chainScore[colorNdx];
-                        }
-                    }
-                    state.chainScore[colorNdx] = 1;
-                    state.chainIsRunBreakingIfUnused[colorNdx]=current.IsInvalidIfUnused;
+                    possibleRuns.Add(new List<int> { number });
                 }
             }
-            state.lastForColor[colorNdx] = current;
-            return false;
+            return 0;
+            //1 2 3  6 7   A    1   4 5 6 7   C D 
+            //var lowestFirst=possibleRuns.OrderBy(x=>x.Count).ToList();
+
         }
     }
 }
