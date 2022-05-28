@@ -94,6 +94,28 @@ namespace RunsRainbowTableGenerator.Logic
     }
     public class RunSolver
     {
+        public static readonly IReadOnlyList<int> TilesOfSingleColor = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+        public RunResult SolveForPossibility(uint possibility)
+        {
+            List<int> solveWith=new List<int>();
+            List<int> solveWithDups=new List<int>();
+            var bv = new BitVector32(possibility);
+            for(int j = 0; j < TilesOfSingleColor.Count; j++)
+            {
+                if(bv[j])
+                {
+                    if (j < 13)
+                    {
+                        solveWith.Add(TilesOfSingleColor[j]);
+                    }
+                    else
+                    {
+                        solveWithDups.Add(TilesOfSingleColor[j]);
+                    }
+                }
+            }
+            return Solve(solveWith,solveWithDups);
+        }
 
         public RunResult Solve(List<int> solveWith, List<int> solveWithDups)
         {

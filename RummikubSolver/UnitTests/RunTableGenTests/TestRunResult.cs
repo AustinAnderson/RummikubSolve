@@ -44,14 +44,10 @@ namespace UtilTests
         [TestMethod]
         public void TestIntConstructor()
         {
-            //bit string is reversed for treating as array left to right,
-            //                                 12345678901234567890123456
-            //so                                  MLKJIHGFEDCBA9876543210
-            RunResult result = new RunResult(0b00011000000000001100100101);
-                                           //7 10100100110000000000001100
+            //                                 12345678901234567890123456789012
+            RunResult result = new RunResult(0b10100100110000000000011000000000);
             result.ScoreIfValid = 7;
-            //                 1234567890123456789012345
-            //                 0123456789ABCDEFGHIJKLM
+            //                 12345678901234567890123456
             Assert.AreEqual("7 10100100110000000000011000", result.ToString());
         }
         [TestMethod]

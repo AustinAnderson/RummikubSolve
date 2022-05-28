@@ -24,7 +24,7 @@ namespace SharedModels
     public struct RunResult
     {
 
-        private const uint UNUSED_FLAGS_MASK = (~1U) >> 6;
+        private const uint SCORE_IF_VALID_MASK = 0b111111;
         public RunResult(uint data)
         {
             this.data = data;
@@ -43,19 +43,19 @@ namespace SharedModels
         }
         private uint data;
         public uint Data => data;
-        public uint Unused => data & UNUSED_FLAGS_MASK;
+        public uint Unused => data & ~SCORE_IF_VALID_MASK;
         public int ScoreIfValid
         {
-            get => (int)((data & ~UNUSED_FLAGS_MASK)>>26);
+            get => (int)(data & SCORE_IF_VALID_MASK);
             set
             {
-                data = data & UNUSED_FLAGS_MASK;//clear everything except unused flags mask
-                data = data | (((uint)value) << 26);
+                data = Unused; //clear out score
+                data |= (uint)value;
             }
         } 
         public override string ToString() 
         {
-            return ""+ScoreIfValid+" "+string.Join("", Convert.ToString(Unused, 2).PadLeft(26,'0').Reverse());
+            return ""+ScoreIfValid+" "+Convert.ToString(Unused, 2).PadLeft(32,'0').Substring(0,26);
         }
         public bool this[int index]
         {

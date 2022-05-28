@@ -29,11 +29,6 @@ namespace TestRunCalc
     [TestClass]
     public class TestHandOrBoardValidity
     {
-        static TestHandOrBoardValidity()
-        {
-            RunResultRainbowTable.Load(Environment.ExpandEnvironmentVariables("%TEMP%"));
-        }
-        
         [TestMethod]
         public void ValidIfHandUnused()
         {
@@ -93,19 +88,19 @@ namespace TestRunCalc
                 }
             );
             */
-            var usedCalcState = new UsedTilesState();
+            var unusedCalcState = new UsedTilesState();
+            //                                                                1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
+            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(new[] { o,i,o,i,i,i,o,i,o,i,o,o,o,o,o,o,i,o,o,o,o,o,o,o,o,o });
+            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(new[] { o,i,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(new[] { o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(new[] { o,o,o,o,o,i,o,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
             //                                                              1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
-            usedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(new[] { o,i,o,i,i,i,o,i,o,i,o,o,o,o,o,o,i,o,o,o,o,o,o,o,o,o });
-            usedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(new[] { o,i,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            usedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(new[] { o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            usedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(new[] { o,o,o,o,o,i,o,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            //                                                          1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
-            usedCalcState.UsedInGroupsFlags[b]= new BitVector32(new[] { i,o,o,o,o,o,o,o,o,o,i,i,i,i,i,o,o,i,i,i,i,o,i,i,i,i });
-            usedCalcState.UsedInGroupsFlags[r]= new BitVector32(new[] { o,o,o,o,i,i,i,o,o,i,i,i,i,i,i,o,i,i,i,i,i,o,i,i,i,i });
-            usedCalcState.UsedInGroupsFlags[t]= new BitVector32(new[] { o,i,i,o,i,i,o,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i });
-            usedCalcState.UsedInGroupsFlags[y]= new BitVector32(new[] { i,o,o,o,o,o,o,o,o,o,i,i,i,i,i,i,i,i,i,i,i,i,i,i,o,i });
+            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(new[] { o,i,i,i,i,i,i,i,i,i,o,o,o,o,o,i,i,o,o,o,o,i,o,o,o,o });
+            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(new[] { i,i,i,i,o,o,o,i,i,o,o,o,o,o,o,i,o,o,o,o,o,i,o,o,o,o });
+            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(new[] { i,o,o,i,o,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(new[] { o,i,i,i,i,i,i,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,i,o });
             var scorer = new RunScorer();
-            Assert.AreEqual(11,scorer.Score(ref usedCalcState));
+            Assert.AreEqual(11,scorer.Score(ref unusedCalcState));
         }
     }
     [TestClass]

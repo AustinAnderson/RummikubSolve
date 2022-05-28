@@ -12,12 +12,12 @@ namespace SolverLogic.Models
         public UsedTilesState()
         {
             InvalidIfUnusedFlags = new BitVector32[4];
-            UsedInGroupsFlags = new BitVector32[4];
+            UnusedInGroupsFlags = new BitVector32[4];
         }
         public UsedTilesState(TileSetForCurrentHand tileSet)
         {
             InvalidIfUnusedFlags = new BitVector32[4];
-            UsedInGroupsFlags = new BitVector32[4];
+            UnusedInGroupsFlags = new BitVector32[4];
             foreach (var tile in tileSet.Tiles)
             {
                 if(tile.IsBoardTile && tile.EquivalentHandTileId == null)
@@ -46,19 +46,19 @@ namespace SolverLogic.Models
         public BitVector32[] InvalidIfUnusedFlags { get; }
         public void ClearUsed()
         {
-            for(int i = 0; i < UsedInGroupsFlags.Length; i++)
+            for(int i = 0; i < UnusedInGroupsFlags.Length; i++)
             {
-                UsedInGroupsFlags[i] = new BitVector32();
+                UnusedInGroupsFlags[i] = new BitVector32();
             }
         }
         //set the flag according to key 123456789ABCD123456789ABCD
         //for used in the groups, then the int with match the index of the runs look up table
-        public BitVector32[] UsedInGroupsFlags { get; }
+        public BitVector32[] UnusedInGroupsFlags { get; }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for(int i= 0; i < UsedInGroupsFlags.Length; i++)
+            for(int i= 0; i < UnusedInGroupsFlags.Length; i++)
             {
                 sb.Append(((TileColor)i).Char());
                 for(int j = 0; j < 32; j++)
@@ -68,7 +68,7 @@ namespace SolverLogic.Models
                         //combining underline
                         sb.Append("\u0332");
                     }
-                    sb.Append(UsedInGroupsFlags[i][j] ? '1' : '0');
+                    sb.Append(UnusedInGroupsFlags[i][j] ? '1' : '0');
                 }
             }
             return sb.ToString();

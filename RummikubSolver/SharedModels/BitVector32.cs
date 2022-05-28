@@ -14,7 +14,6 @@ namespace RunsRainbowTableGenerator
         {
             data=0;
         }
-        //why doesn't the built in version support this :(
         public BitVector32(uint initial)
         {
             data = initial;
@@ -24,12 +23,12 @@ namespace RunsRainbowTableGenerator
             data = 0;
             for(int i = 0; i < init.Length; i++)
             {
-                this[i] = true;
+                this[i] = init[i];
             }
         }
         public override string ToString() 
         {
-            return string.Join("", Convert.ToString(Data, 2).Reverse());
+            return Convert.ToString(Data, 2);
         }
         public bool this[int index]
         {
@@ -38,12 +37,27 @@ namespace RunsRainbowTableGenerator
         }
         public static bool GetBit(uint dataRef, int index)
         {
-            return (1 & (dataRef>>index)) == 1;
+            //            12345678901234567890123456789012
+            uint mask = 0b10000000000000000000000000000000;
+            //  ==1 ==0
+            //    vv
+            //00001010100001001001001001010
+            //----------------------------
+            //00001000000000000000000000000
+            //00000100000000000000000000000
+            return (dataRef & (mask >> index)) != 0;
         }
         public static void SetBit(ref uint dataRef, int index, bool value)
         {
+            //            12345678901234567890123456789012
+            uint mask = 0b10000000000000000000000000000000;
+            uint setBit= 0;
+            if (value)
+            {
+                setBit = mask;
+            }
             //clear the bit by anding with not of that bit, then set it to true or false
-            dataRef = (dataRef & (~(1U << index))) | ((value ? 1U : 0) << index);
+            dataRef = (dataRef & (~(mask >> index)) | (setBit >> index));
         }
     }
 }

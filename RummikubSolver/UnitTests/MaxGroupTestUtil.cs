@@ -51,7 +51,7 @@ namespace UnitTests
             group.MarkUsedForSelected(ref actualState, key);
             foreach (var tile in expectedUsed)
             {
-                expectedState.UsedInGroupsFlags[(int)tile.Color][tile.Number + ((tile.Originality > 0 ? 1 : 0) * 13)] = true;
+                expectedState.UnusedInGroupsFlags[(int)tile.Color][tile.Number + ((tile.Originality > 0 ? 1 : 0) * 13)] = true;
             }
             //not used == unused
             Assert.AreEqual(expectedState.ToString(), actualState.ToString(), "expected unused numbers to match for key 123456789ABCD123456789ABCD");

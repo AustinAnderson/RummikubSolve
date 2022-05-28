@@ -110,7 +110,7 @@ namespace SolverLogic.Models
             {
                 if(!res.excludes.Contains(i))
                 {
-                    usedTiles.UsedInGroupsFlags[(int)allGroup[i].TileColor][usedBitNdx] = true;
+                    usedTiles.UnusedInGroupsFlags[(int)allGroup[i].TileColor][usedBitNdx] = true;
                 }
             }
         }
