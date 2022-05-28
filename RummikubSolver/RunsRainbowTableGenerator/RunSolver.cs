@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SharedModels;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RunsRainbowTableGenerator
+namespace RunsRainbowTableGenerator.Logic
 {
     public struct DupTrackingInt
     {

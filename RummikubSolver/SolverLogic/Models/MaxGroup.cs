@@ -101,41 +101,18 @@ namespace SolverLogic.Models
             return group;
             
         }
-        public void MarkUsedForSelected(ref UsedTilesState usedTiles)
+        public void MarkUsedForSelected(ref UsedTilesState usedTiles, int key)
         {
-
-        }
-        public void AddUnusedForSelected(FastCalcTile[] addTo, ref int addLocation, int whichConf)
-        {
-            if(whichConf == 0)
+            var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
+            if (res.size == 0) return;
+            int usedBitNdx = allGroup[0].Number + allGroup[0].Originality * 13;
+            for(int i = 0; i < allGroup.Length; i++)
             {
-                for(int i = 0; i < allGroup.Length; i++)
+                if(!res.excludes.Contains(i))
                 {
-                    addTo[addLocation]=allGroup[i];
-                    addLocation++;
+                    usedTiles.UsedInGroupsFlags[(int)allGroup[i].TileColor][usedBitNdx] = true;
                 }
             }
-            else if (PossibilityCount != 2)
-            {
-                //if(possibilityCount==2) done, using all tiles
-                //1-4= return that tile as unused
-                //else possibility #6: selected==5 and so using all the tiles, no add
-                if (whichConf < 5)
-                {
-                    addTo[addLocation] = allGroup[whichConf - 1];
-                    addLocation++;
-                }
-                //selected==5 same as 4 tile case (using the first 4), but add the two dups to unused
-                //if we have the 2 dups add them unless all used
-                if (PossibilityCount == 7 && whichConf != 6)
-                {
-                    addTo[addLocation] = allGroup[4];
-                    addLocation++;
-                    addTo[addLocation] = allGroup[5];
-                    addLocation++;
-                }
-            }
-
         }
         public static IComparer<MaxGroup> Comparer { get; } = Comparer<MaxGroup>.Create((x, y) => x.allGroup[0].Number - y.allGroup[0].Number);
         public override string ToString()

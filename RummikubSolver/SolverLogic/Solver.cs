@@ -69,58 +69,45 @@ namespace SolverLogic
                 currentPossibility++;
             }
 
-            int numThreads = 1;
-            var tasks=new Task<(GroupConf,int)>[numThreads];
-            int chunkSize=expectedPossibilitiesCount / numThreads;
-            int finalScore = 0;
-            GroupConf solkey = default;
-            for(int i = 0; i < numThreads; i++)
+            var tilesState = new UsedTilesState(tileSet);
+            int score = 0;
+            GroupConf solutionKey = default;
+            var groupIterable = new MaxGroupIterable(groups);
+            var scorer = new RunScorer();
+            for(int i = 0; i < confs.Length; i++)
             {
-                int lBound = i*chunkSize;
-                int uBound = (i+1)*chunkSize;
-                //tasks[i] = Task.Run(() =>
-                //{
-                    RunScorer scorer=new RunScorer();
-                    GroupConf solutionKey = default;
-                    int score = int.MaxValue;
-                    var groupIterable = new MaxGroupIterable(groups);
-                //for (int j = lBound; j < uBound; j++)
-                //{
-                var conf = new GroupConf(new[] {2,0,0,1,0,5,0,0,0,1,1,4,1});//confs[j];
-                        var unused = groupIterable.GetUnusedForKey(conf);
-                        int currentScore = scorer.Score(baseUnusedFastCalcArray, ref unused);
-                        if (currentScore < score)
-                        {
-                            score = currentScore;
-                            solutionKey = conf;
-                        }
-                    //}
-                finalScore = score;
-                solkey = solutionKey;
-                    //return (solutionKey, score);
-                //});
+                tilesState.ClearUsed();
+                groupIterable.MarkUnusedForConf(ref tilesState,confs[i]);
+                int currentScore = scorer.Score(ref tilesState);
+                if (currentScore < score)
+                {
+                    score = currentScore;
+                    solutionKey = confs[i];
+                }
             }
-            //var res=await Task.WhenAll(tasks);
-            //var (solkey,finalScore)=res.OrderBy(x => x.Item2).First();
             watch.Stop();
             Console.WriteLine("done in "+watch.Elapsed.TotalSeconds+ " seconds");
-            if (finalScore < int.MaxValue)
+            if (score < int.MaxValue)
             {
                 Console.WriteLine("Solution found at");
-                Console.WriteLine($"[{solkey}]");
+                Console.WriteLine($"[{solutionKey}]");
             }
             else
             {
                 Console.WriteLine("no solution found");
             }
+            /*
             //with the solution key, pick that configuration of groups,
             var allGroups= new MaxGroupIterable(groups);
-            var finalGroups=allGroups.GetGroupsForKey(solkey);
+            var finalGroups=allGroups.GetGroupsForKey(solutionKey);
             //and now actually find the most possible runs with the remaining tiles
             var finalRuns = RunFinder.FindRuns(
                 baseUnusedFastCalcArray.Concat(allGroups.GetUnusedForKey(solkey).Trim()).ToList()
             );
             return new SolveResult(tileSet,finalGroups,finalRuns);
+            /*/
+            return null;
+            //*/
         }
     }
 }

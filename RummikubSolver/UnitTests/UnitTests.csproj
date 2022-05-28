@@ -15,7 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RunsRainbowTableGenerator\RunsRainbowTableGenerator.csproj" />
+    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
     <ProjectReference Include="..\SolverLogic\SolverLogic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RunTableGenTests\" />
   </ItemGroup>
 
 </Project>

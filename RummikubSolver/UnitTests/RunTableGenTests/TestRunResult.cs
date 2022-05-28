@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RunsRainbowTableGenerator;
+using SharedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

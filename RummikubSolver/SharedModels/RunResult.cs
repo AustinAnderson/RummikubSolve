@@ -1,10 +1,11 @@
-﻿using System;
+﻿using RunsRainbowTableGenerator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RunsRainbowTableGenerator
+namespace SharedModels
 {
     /*
       unused
@@ -21,6 +22,7 @@ namespace RunsRainbowTableGenerator
     /// </summary>
     public struct RunResult
     {
+
         private const uint UNUSED_FLAGS_MASK = (~1U) >> 6;
         public RunResult(byte[] bytes)
         {
@@ -33,15 +35,15 @@ namespace RunsRainbowTableGenerator
             {
                 Array.Reverse(bytes);
             }
-            Data=BitConverter.ToUInt32(bytes, 0);
+            data=BitConverter.ToUInt32(bytes, 0);
         }
         public RunResult(uint data)
         {
-            Data = data;
+            this.data = data;
         }
         public RunResult(bool[] toEncode)
         {
-            Data = 0;
+            data = 0;
             if (toEncode?.Length != 26)
             {
                 throw new ArgumentException("length must be 26",nameof(toEncode)+".Length");
@@ -51,31 +53,29 @@ namespace RunsRainbowTableGenerator
                 this[i]=toEncode[i];
             }
         }
-        public uint Data { get; private set; }
-        public uint Unused => Data & UNUSED_FLAGS_MASK;
-        public byte[] Bytes => BitConverter.GetBytes(Data);
+        private uint data;
+        public uint Data => data;
+        public uint Unused => data & UNUSED_FLAGS_MASK;
+        public byte[] Bytes => BitConverter.GetBytes(data);
         public int ScoreIfValid
         {
-            get => (int)((Data & ~UNUSED_FLAGS_MASK)>>26);
+            get => (int)((data & ~UNUSED_FLAGS_MASK)>>26);
             set
             {
-                Data |= (((uint)value) << 26);
+                data = data & UNUSED_FLAGS_MASK;//clear everything except unused flags mask
+                data = data | (((uint)value) << 26);
             }
         } 
         public override string ToString() 
         {
-            return ""+ScoreIfValid+" "+string.Join("", Convert.ToString(Unused, 2).PadLeft(32,'0').Reverse());
+            return ""+ScoreIfValid+" "+string.Join("", Convert.ToString(Unused, 2).PadLeft(26,'0').Reverse());
         }
         public bool this[int index]
         {
-            get => (1 & (Data>>index)) == 1;
-            set
-            {
-                //clear the bit by anding with not of that bit, then set it to true or false
-                Data = (Data & (~(1U << index))) | ((value ? 1U : 0) << index);
-            }
+            get => BitVector32.GetBit(data, index);
+            set => BitVector32.SetBit(ref data, index, value);
         }
-        public static explicit operator uint(RunResult res) => res.Data;
+        public static explicit operator uint(RunResult res) => res.data;
         public static explicit operator RunResult(uint data) => new RunResult(data);
     }
 }

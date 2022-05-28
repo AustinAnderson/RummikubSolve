@@ -1,4 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using RunsRainbowTableGenerator;
+using SharedModels;
 using SolverLogic;
 using SolverLogic.Models;
 
@@ -12,7 +14,7 @@ var solver = new Solver(
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y".Split(",").Select(x => new Tile(x.Trim())).ToList()
     )
 );
-RunResult.LoadLookUpTable();
+RunResultRainbowTable.Load(Environment.ExpandEnvironmentVariables("%TEMP%"));
 var res = await solver.Solve();
 foreach(var group in res.Groups)
 {

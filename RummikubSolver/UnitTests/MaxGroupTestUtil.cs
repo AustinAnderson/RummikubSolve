@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RunsRainbowTableGenerator;
 using SolverLogic.Models;
 using System;
 using System.Collections.Generic;
@@ -43,14 +44,35 @@ namespace UnitTests
         {
             return tiles.TileExcept(new[] { new Tile(tileRep) });
         }
-        public static void AssertCurrentUnusedMatches(IEnumerable<Tile> expected, MaxGroup group, int key)
+        public static void AssertCurrentUsedMatches(IEnumerable<Tile> expectedUnused, MaxGroup group, int key)
         {
             var unused = new FastCalcTile[10];
-            int addLocation = 0;
-            group.AddUnusedForSelected(unused, ref addLocation,key);
-            var unusedStr=string.Join(",", unused.Take(addLocation).Select(x => x.ToString()));
-            var expectedUnused = string.Join(",", expected.Select(x => x.ToFastCalcTile().ToString()));
-            Assert.AreEqual(expectedUnused, unusedStr,"unused lists don't match");
+            var tileState = new UsedTilesState();
+            group.MarkUsedForSelected(ref tileState, key);
+            //not used == unused
+            var actualUnusedPerColor = tileState.UsedInGroupsFlags.Select(x => new BitVector32(~x.Data)).ToArray();
+            var expectedUnusedPerColor = new BitVector32[4];
+            for(int i = 0; i < expectedUnusedPerColor.Length; i++)
+            {
+                expectedUnusedPerColor[i] = new BitVector32(uint.MaxValue);//all set
+            }
+            foreach(var tile in expectedUnused)
+            {
+                int bitIndex = tile.Number;
+                if (tile.Originality != 0) bitIndex += 13;
+                expectedUnusedPerColor[(int)tile.Color][bitIndex] = false;
+            }
+            string expected = "";
+            for(int i = 0; i < 4; i++)
+            {
+                expected+=((TileColor)i).Char()+expectedUnusedPerColor[i].ToString();
+            }
+            string actual = "";
+            for(int i = 0; i < 4; i++)
+            {
+                actual+=((TileColor)i).Char()+actualUnusedPerColor[i].ToString();
+            }
+            Assert.AreEqual(expected, actual, "expected unused numbers to match for key 123456789ABCD123456789ABCD");
         }
         public static void AssertGroupedMatches([DisallowNull] IEnumerable<Tile> expected, MaxGroup group, int key)
         {
