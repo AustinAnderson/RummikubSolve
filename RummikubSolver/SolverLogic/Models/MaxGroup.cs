@@ -101,6 +101,10 @@ namespace SolverLogic.Models
             return group;
             
         }
+        public void MarkUsedForSelected(ref UsedTilesState usedTiles)
+        {
+
+        }
         public void AddUnusedForSelected(FastCalcTile[] addTo, ref int addLocation, int whichConf)
         {
             if(whichConf == 0)

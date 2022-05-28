@@ -2,7 +2,6 @@
 using SolverLogic;
 using SolverLogic.Models;
 
-/*
 Console.WriteLine("Hello, World!");
 var solver = new Solver(
     new TileSetForCurrentHand(
@@ -13,6 +12,7 @@ var solver = new Solver(
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y".Split(",").Select(x => new Tile(x.Trim())).ToList()
     )
 );
+RunResult.LoadLookUpTable();
 var res = await solver.Solve();
 foreach(var group in res.Groups)
 {
@@ -24,46 +24,6 @@ foreach(var run in res.Runs)
 }
 Console.WriteLine("------------------------------------------------------------------");
 Console.WriteLine(string.Join("        ", res.Hand));
-*/
-
-static string StrRep(List<int> l)
-{
-    string s = "";
-    foreach(var item in l)
-    {
-        s += item switch
-        {
-            13 => "D",
-            12 => "C",
-            11 => "B",
-            10 => "A",
-            _ => "" + item
-        };
-    }
-    return s;
-}
-//2^26-1 possibilities
-var arr = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-for(uint i = 0; i < ((1<<arr.Length)); i++)
-{
-    List<int> solveWith=new List<int>();
-    for(int j = 0; j<arr.Length; j++)
-    {
-        if(!new BitVector128(i)[j])
-        {
-            solveWith.Add(arr[j]);
-        }
-    }
-
-}
-static int Solve(List<int> list)
-{
-    for(int i = 0; i < list.Count; i++)
-    {
-
-    }
-    return 0;
-}
 //which one is missing is which bit is set when counting in bin
 //1 2 3 4 5 | 0 0 0 0 0
 //1 2 3 4   | 0 0 0 0 1
