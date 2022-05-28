@@ -8,7 +8,7 @@ Console.WriteLine("Hello, World!");
 var tilesOfSingleColor = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 RunSolver solver = new RunSolver();
 var results = new RunResult[(1 << tilesOfSingleColor.Length)];
-for(uint i = 0; i < (1 << tilesOfSingleColor.Length); i++)
+for(uint i = 0; i < results.Length; i++)
 {
     List<int> solveWith=new List<int>();
     List<int> solveWithDups=new List<int>();
@@ -43,11 +43,11 @@ var path = new FileInfo(
 ).FullName;
 await using (var resultFile = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, useAsync: false))
 {
-    foreach (var item in results)
+    await using (var writer = new BinaryWriter(resultFile))
     {
-        foreach (byte b in item.Bytes)
+        foreach (var item in results)
         {
-            resultFile.WriteByte(b);
+            writer.Write(item.Data);
         }
     }
 }

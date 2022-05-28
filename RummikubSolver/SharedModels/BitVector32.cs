@@ -19,6 +19,14 @@ namespace RunsRainbowTableGenerator
         {
             data = initial;
         }
+        public BitVector32(bool[] init)
+        {
+            data = 0;
+            for(int i = 0; i < init.Length; i++)
+            {
+                this[i] = true;
+            }
+        }
         public override string ToString() 
         {
             return string.Join("", Convert.ToString(Data, 2).Reverse());

@@ -1,8 +1,10 @@
-﻿namespace SharedModels
+﻿using System.Runtime.Serialization.Formatters.Binary;
+
+namespace SharedModels
 {
     public class RunResultRainbowTable
     {
-        public const string RUNS_RAINBOW_TABLE_FILE_NAME = "runsRainbowTable.dat";
+        public const string RUNS_RAINBOW_TABLE_FILE_NAME = "runsRainbowTable.bin";
         private static RunResult[]? values;
         public static void Load(string path="")
         {
@@ -15,19 +17,13 @@
             }
             values=new RunResult[datFile.Length/4];
             using var readStream=new FileStream(datFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var buffer = new byte[4];
+            using var reader=new BinaryReader(readStream);
             int current = 0;
-            int read = 0;
-            do
+            while(reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                read=readStream.Read(buffer, 0, 4);
-                if (read > 0)
-                {
-                    values[current] = new RunResult(buffer);
-                    current++;
-                }
+                values[current]=new RunResult(reader.ReadUInt32());
+                current++;
             }
-            while(read != 0);
         }
         public static RunResult Get(int i)
         {

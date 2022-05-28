@@ -9,6 +9,11 @@ namespace SolverLogic.Models
 {
     public struct UsedTilesState
     {
+        public UsedTilesState()
+        {
+            InvalidIfUnusedFlags = new BitVector32[4];
+            UsedInGroupsFlags = new BitVector32[4];
+        }
         public UsedTilesState(TileSetForCurrentHand tileSet)
         {
             InvalidIfUnusedFlags = new BitVector32[4];
@@ -49,5 +54,24 @@ namespace SolverLogic.Models
         //set the flag according to key 123456789ABCD123456789ABCD
         //for used in the groups, then the int with match the index of the runs look up table
         public BitVector32[] UsedInGroupsFlags { get; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for(int i= 0; i < UsedInGroupsFlags.Length; i++)
+            {
+                sb.Append(((TileColor)i).Char());
+                for(int j = 0; j < 32; j++)
+                {
+                    if (InvalidIfUnusedFlags[i][j])
+                    {
+                        //combining underline
+                        sb.Append("\u0332");
+                    }
+                    sb.Append(UsedInGroupsFlags[i][j] ? '1' : '0');
+                }
+            }
+            return sb.ToString();
+        }
     }
 }

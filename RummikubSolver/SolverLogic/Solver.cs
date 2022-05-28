@@ -76,13 +76,16 @@ namespace SolverLogic
             var scorer = new RunScorer();
             for(int i = 0; i < confs.Length; i++)
             {
+                var conf = confs[i];
+                //var conf=new GroupConf(new[] { 3,1,0,5,0,2,1,1,1,1,0});
+
                 tilesState.ClearUsed();
-                groupIterable.MarkUnusedForConf(ref tilesState,confs[i]);
+                groupIterable.MarkUnusedForConf(ref tilesState,conf);
                 int currentScore = scorer.Score(ref tilesState);
                 if (currentScore < score)
                 {
                     score = currentScore;
-                    solutionKey = confs[i];
+                    solutionKey = conf;
                 }
             }
             watch.Stop();

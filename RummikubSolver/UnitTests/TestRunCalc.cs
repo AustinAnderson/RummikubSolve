@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RunsRainbowTableGenerator;
+using SharedModels;
 using SolverLogic;
 using SolverLogic.Models;
-using System.Collections.Specialized;
+using System;
 using System.Linq;
 using UnitTests;
 
@@ -27,6 +29,10 @@ namespace TestRunCalc
     [TestClass]
     public class TestHandOrBoardValidity
     {
+        static TestHandOrBoardValidity()
+        {
+            RunResultRainbowTable.Load(Environment.ExpandEnvironmentVariables("%TEMP%"));
+        }
         
         [TestMethod]
         public void ValidIfHandUnused()
@@ -68,6 +74,14 @@ namespace TestRunCalc
             //R (1 2 3 4) (8 9) (3) (9)
             //T (1) (4) (7) 
             //Y (2 3 4 5 6 7 8 9 A) (C)
+            //11
+            bool i = true;
+            bool o = false;
+            int b = (int)TileColor.BLACK;
+            int r = (int)TileColor.RED;
+            int t = (int)TileColor.TEAL;
+            int y = (int)TileColor.YELLOW;
+            /*
             RunCalcTestUtil.AssertCorrectScoreFound(11,
                 new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
                 new[] {
@@ -78,6 +92,20 @@ namespace TestRunCalc
                     "3Bb*1", "3Rb*1", "4Bb_1", "9Bb*1", "9Rh_1",
                 }
             );
+            */
+            var usedCalcState = new UsedTilesState();
+            //                                                              1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
+            usedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(new[] { o,i,o,i,i,i,o,i,o,i,o,o,o,o,o,o,i,o,o,o,o,o,o,o,o,o });
+            usedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(new[] { o,i,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            usedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(new[] { o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            usedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(new[] { o,o,o,o,o,i,o,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
+            //                                                          1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
+            usedCalcState.UsedInGroupsFlags[b]= new BitVector32(new[] { i,o,o,o,o,o,o,o,o,o,i,i,i,i,i,o,o,i,i,i,i,o,i,i,i,i });
+            usedCalcState.UsedInGroupsFlags[r]= new BitVector32(new[] { o,o,o,o,i,i,i,o,o,i,i,i,i,i,i,o,i,i,i,i,i,o,i,i,i,i });
+            usedCalcState.UsedInGroupsFlags[t]= new BitVector32(new[] { o,i,i,o,i,i,o,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i });
+            usedCalcState.UsedInGroupsFlags[y]= new BitVector32(new[] { i,o,o,o,o,o,o,o,o,o,i,i,i,i,i,i,i,i,i,i,i,i,i,i,o,i });
+            var scorer = new RunScorer();
+            Assert.AreEqual(11,scorer.Score(ref usedCalcState));
         }
     }
     [TestClass]

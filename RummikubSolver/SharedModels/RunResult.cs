@@ -20,23 +20,11 @@ namespace SharedModels
     /// the top 6 bits encode the unused count. Because we're tracking unused as true, all bits default to used
     /// </para>
     /// </summary>
+    [Serializable]
     public struct RunResult
     {
 
         private const uint UNUSED_FLAGS_MASK = (~1U) >> 6;
-        public RunResult(byte[] bytes)
-        {
-            if(bytes.Length != 4)
-            {
-                throw new ArgumentException("byte array must have exactly 4 bytes",nameof(bytes)+".Length");
-            }
-            //Not sure on this, since the dat file should be written by the write all bytes on the Bytes getter
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            data=BitConverter.ToUInt32(bytes, 0);
-        }
         public RunResult(uint data)
         {
             this.data = data;
@@ -56,7 +44,6 @@ namespace SharedModels
         private uint data;
         public uint Data => data;
         public uint Unused => data & UNUSED_FLAGS_MASK;
-        public byte[] Bytes => BitConverter.GetBytes(data);
         public int ScoreIfValid
         {
             get => (int)((data & ~UNUSED_FLAGS_MASK)>>26);
