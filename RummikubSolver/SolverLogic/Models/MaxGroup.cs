@@ -45,25 +45,25 @@ namespace SolverLogic.Models
                 new SizeAndExcludeList{ size = 6, excludes = new int[] {}}
             };
         }
-        private readonly FastCalcTile[] allGroup;
+        private readonly List<Tile> allGroup;
         public int PossibilityCount { get; private set; }
         public MaxGroup(List<Tile> tilesFound)
         {
-            allGroup = tilesFound.Select(x=>x.ToFastCalcTile()).ToArray();
+            allGroup = tilesFound;
             //if 3, all or nothing,
             //if 4, all, nothing, and the 4 3-groups leaving out 1
             //if 6, same as 4 but also the possibility of 2 3-groups at the same time
             PossibilityCount = Possibilities_6G;
-            if (allGroup.Length== 3)
+            if (allGroup.Count== 3)
             {
                 PossibilityCount = Possibilities_3G;
             }
-            else if (allGroup.Length== 4)
+            else if (allGroup.Count == 4)
             {
                 PossibilityCount = Possibilities_4G;
             }
             string errorCtx = $"invalid group [{string.Join(",", tilesFound.Select(x => x.DebugDisplay))}]: ";
-            if(!new[] { 3, 4, 6 }.Contains(allGroup.Length))
+            if(!new[] { 3, 4, 6 }.Contains(allGroup.Count))
             {
                 throw new ArgumentException(errorCtx+"size must be either 3, 4, or 6");
             }
@@ -84,13 +84,13 @@ namespace SolverLogic.Models
                 lastColor = tilesFound[i].Color;
             }
         }
-        public FastCalcTile[] GetGroupForPossibilityKey(int key)
+        public Tile[] GetGroupForPossibilityKey(int key)
         {
             var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
-            if (res.size == 0) return new FastCalcTile[] { };
-            var group = new FastCalcTile[res.size];
+            if (res.size == 0) return new Tile[] { };
+            var group = new Tile[res.size];
             int index = 0;
-            for(int i = 0; i < allGroup.Length; i++)
+            for(int i = 0; i < allGroup.Count; i++)
             {
                 if(!res.excludes.Contains(i))
                 {
@@ -101,16 +101,16 @@ namespace SolverLogic.Models
             return group;
             
         }
-        public void MarkUsedForSelected(ref UsedTilesState usedTiles, int key)
+        public void MarkUsedForSelected(ref UnusedTilesState usedTiles, int key)
         {
             var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
             if (res.size == 0) return;
             int usedBitNdx = allGroup[0].Number + allGroup[0].Originality * 13;
-            for(int i = 0; i < allGroup.Length; i++)
+            for(int i = 0; i < allGroup.Count; i++)
             {
                 if(!res.excludes.Contains(i))
                 {
-                    usedTiles.UnusedInGroupsFlags[(int)allGroup[i].TileColor][usedBitNdx] = true;
+                    usedTiles.UnusedInGroupsFlags[(int)allGroup[i].Color][usedBitNdx] = true;
                 }
             }
         }

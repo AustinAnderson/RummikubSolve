@@ -1,4 +1,5 @@
-﻿using SolverLogic.Models;
+﻿using SharedModels;
+using SolverLogic.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,9 +12,12 @@ namespace SolverLogic
     public class Solver
     {
         private TileSetForCurrentHand tileSet;
-        public Solver(TileSetForCurrentHand tileSet)
+        private readonly IRunResultRainbowTable rainbowTable;
+
+        public Solver(TileSetForCurrentHand tileSet,IRunResultRainbowTable rainbowTable)
         {
             this.tileSet = tileSet;
+            this.rainbowTable = rainbowTable;
         }
         public async Task<SolveResult> Solve()
         {
@@ -21,7 +25,6 @@ namespace SolverLogic
             watch.Start();
             var groups = MaxGroupFinder.FindMaxGroups(tileSet, out List<Tile> groupBaseUnused);
             groups.Sort(MaxGroup.Comparer);
-            var baseUnusedFastCalcArray=groupBaseUnused.Select(t=>t.ToFastCalcTile()).OrderBy(x=>(int)x).ToArray();
             int expectedPossibilitiesCount = 1;
 
             foreach(var group in groups)
@@ -69,11 +72,11 @@ namespace SolverLogic
                 currentPossibility++;
             }
 
-            var tilesState = new UsedTilesState(tileSet);
+            var tilesState = new UnusedTilesState(tileSet);
             int score = 0;
             GroupConf solutionKey = default;
             var groupIterable = new MaxGroupIterable(groups);
-            var scorer = new RunScorer();
+            var scorer = new RunScorer(rainbowTable);
             for(int i = 0; i < confs.Length; i++)
             {
                 var conf = confs[i];

@@ -2,11 +2,16 @@
 
 namespace SharedModels
 {
-    public class RunResultRainbowTable
+    public interface IRunResultRainbowTable
+    {
+        RunResult GetFor(uint possibility);
+    }
+
+    public class RunResultRainbowTable:IRunResultRainbowTable
     {
         public const string RUNS_RAINBOW_TABLE_FILE_NAME = "runsRainbowTable.bin";
-        private static RunResult[]? values;
-        public static void Load(string path="")
+        private RunResult[] values;
+        public RunResultRainbowTable(string path="")
         {
             var fullPath = RUNS_RAINBOW_TABLE_FILE_NAME;
             if(path!=null) fullPath = Path.Combine(path, fullPath);
@@ -25,13 +30,6 @@ namespace SharedModels
                 current++;
             }
         }
-        public static RunResult Get(int i)
-        {
-            if(values == default)//this if should be branch predicted away
-            {
-                throw new ArgumentException($"{nameof(Load)} must be called before the table can be used");
-            }
-            return values[i];
-        }
+        public RunResult GetFor(uint i) => values[i];
     }
 }

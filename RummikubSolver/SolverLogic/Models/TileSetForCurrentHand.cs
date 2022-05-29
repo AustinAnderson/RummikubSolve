@@ -30,7 +30,7 @@ namespace SolverLogic.Models
                 }
                 else
                 {
-                    originalities[(tiles[i].Number, tiles[i].Color)] = 0;
+                    originalities[(tiles[i].Number, tiles[i].Color)] = 1;
                 }
                 tiles[i].Id = i;
                 if (tiles[i].SameValue(tiles[i + 1]) && tiles[i].IsBoardTile && !tiles[i + 1].IsBoardTile)

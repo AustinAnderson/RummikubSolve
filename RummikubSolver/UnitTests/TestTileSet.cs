@@ -10,7 +10,7 @@ namespace UnitTests
     public class TestTileSet
     {
         private int idCounter=0;
-        public FastCalcTile MakeFastCalcTile(string desc, bool includeId=true)
+        public Tile MakeTile(string desc, bool includeId=true)
         {
             var num = desc[0] switch
             {
@@ -39,7 +39,7 @@ namespace UnitTests
             {
                 tile.Originality = originality;
             }
-            return tile.ToFastCalcTile();
+            return tile;
         }
     }
 }

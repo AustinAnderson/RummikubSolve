@@ -4,180 +4,137 @@ using SharedModels;
 using SolverLogic;
 using SolverLogic.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnitTests;
 
 namespace TestRunCalc
 {
-    public static class RunCalcTestUtil
-    {
-        public static void AssertCorrectScoreFound(int expectedScore, string[] baseUnused, string[] unusedCalc)
-        {
-            var testTileSet=new TestTileSet();
-            var arr = new UnusedFastCalcArray
-            {
-                Set = unusedCalc.Concat(new[] { 
-                    "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0", "9Bh_0",//simulated arbitrary trash from last add try: trimmed out
-                }).Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray(),
-                Count = unusedCalc.Length,
-            };
-            int currentScore = 0; //new RunScorer().Score(baseUnused.Select(x=>testTileSet.MakeFastCalcTile(x)).ToArray(), ref arr);
-            Assert.AreEqual(expectedScore, currentScore, $"score should be {expectedScore}");
-
-        }
-    }
     [TestClass]
     public class TestHandOrBoardValidity
     {
+            
+        const int b = (int)TileColor.BLACK;
+        const int r = (int)TileColor.RED;
+        const int t = (int)TileColor.TEAL;
+        const int y = (int)TileColor.YELLOW;
         [TestMethod]
         public void ValidIfHandUnused()
         {
-            RunCalcTestUtil.AssertCorrectScoreFound(4,
+            /*
                 new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
                 //                      valid because would be left over but came from the hand
                 new[] {//                                                                     |
                     "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRh_0", "BYb_0", "CYb*_0",
                 }
             );
+            */
+            //B (3h 4b 5b 6b) (9h Ab Bb)
+            //R (3h 4b 5b) 9h Bh
+            //T 1h 4h
+            //Y (4h 5h 6b) (Ab Bb Cb*)
+            //9
+            var unusedCalcState = new UnusedTilesState();
+            //                                                                     bit cleared on r row because hand tile
+            //                                                                     v
+            //                                                           1234567890123 4567890123456 789012
+            //                                                           123456789ABCD 123456789ABCD
+            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b_0001110001100_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b_0001100000000_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b_0000000000000_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b_0000010001100_0000000000000_000000);
+            //                                                         1234567890123 4567890123456 789012
+            //                                                         123456789ABCD 123456789ABCD
+            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b_0011110011100_0011000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b_0011100010100_0010000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b_1001001000000_0000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b_0001110001110_0000000000000_000000);
+            var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
+            {
+                //                                                             12345678901234567890123456789012
+                //                                                             123456789ABCD123456789ABCD
+                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000000000000000)},
+                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000000000000000000000000)}
+            }));
+            Assert.AreEqual(4,scorer.Score(ref unusedCalcState));
+
         }
-        [TestMethod]
-        public void ValidIfBoardUnusedWithHandEquivalent()
-        {
-            RunCalcTestUtil.AssertCorrectScoreFound(4,
-                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
-                //       valid because would be left over but can be subbed for one in the hand
-                new[] {//                                                                     |
-                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb*0", "BYb_0", "CYb*_0",
-                }
-            );
-        }
+        //[TestMethod]
+        //public void ValidIfBoardUnusedWithHandEquivalent()
         [TestMethod]
         public void InvalidIfBoardUnused()
         {
-            RunCalcTestUtil.AssertCorrectScoreFound(int.MaxValue,
+            /*
                 new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
                 //        invalid because would be left over, and originally came from the board
                 new[] {//                                                                      |
                     "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Rb_0", "5Yh_0", "BBb_0", "BRb_0", "BYb_0", "CYb*_0",
                 }
-            );
+            */
+            //B (3h 4b 5b 6b) (9h Ab Bb)
+            //R (3h 4b 5b) 9h Bb
+            //T 1h 4h
+            //Y (4h 5h 6b) (Ab Bb Cb*)
+            //9
+            var unusedCalcState = new UnusedTilesState();
+            //                                                                     bit set on r row because board tile
+            //                                                                     v
+            //                                                           1234567890123 4567890123456 789012
+            //                                                           123456789ABCD 123456789ABCD
+            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b_0001110001100_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b_0001100000100_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b_0000000000000_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b_0000010001100_0000000000000_000000);
+            //                                                         1234567890123 4567890123456 789012
+            //                                                         123456789ABCD 123456789ABCD
+            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b_0011110011100_0011000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b_0011100010100_0010000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b_1001001000000_0000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b_0001110001110_0000000000000_000000);
+            var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
+            {
+                //                                                             12345678901234567890123456789012
+                //                                                             123456789ABCD123456789ABCD
+                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000000000000000)},
+                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000000000000000000000000)}
+            }));
+            Assert.AreEqual(int.MaxValue,scorer.Score(ref unusedCalcState));
         }
         [TestMethod]
         public void TestThatOneCaseThatFailed()
         {
-            //B (2 3 4 5 6 7 8 9 A) (3 4) (9)
-            //R (1 2 3 4) (8 9) (3) (9)
+            //B (3 4 5 6 7 8 9 A) (2 3' 4') (9')
+            //R (1 2 3 4) (8 9) (3') (9')
             //T (1) (4) (7) 
             //Y (2 3 4 5 6 7 8 9 A) (C)
-            //11
-            bool i = true;
-            bool o = false;
-            int b = (int)TileColor.BLACK;
-            int r = (int)TileColor.RED;
-            int t = (int)TileColor.TEAL;
-            int y = (int)TileColor.YELLOW;
-            /*
-            RunCalcTestUtil.AssertCorrectScoreFound(11,
-                new[] { "1Th_0", "3Bh_0", "3Rh_0", "6Bb_0", "6Yb_0", "9Bh_0", "9Rh_0", "ABb_0", "AYb_0" },
-                new[] {
-                    "1Rh_0", "2Bb_0", "2Rb_0", "2Yh_0", "3Yh_0",
-                    "4Bb_0", "4Rb_0", "4Th_0", "4Yh_0", "5Bb_0", "5Yh_0",
-                    "7Bh_0", "7Th_0", "7Yb_0", "8Bb_0", "8Rh_0", "8Yb_0",
-                    "9Yb_0", "CYb*0",
-                    "3Bb*1", "3Rb*1", "4Bb_1", "9Bb*1", "9Rh_1",
-                }
-            );
-            */
-            var unusedCalcState = new UsedTilesState();
-            //                                                                1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
-            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(new[] { o,i,o,i,i,i,o,i,o,i,o,o,o,o,o,o,i,o,o,o,o,o,o,o,o,o });
-            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(new[] { o,i,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(new[] { o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(new[] { o,o,o,o,o,i,o,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            //                                                              1 2 3 4 5 6 7 8 9 A B C D 1 2 3 4 5 6 7 8 9 A B C D
-            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(new[] { o,i,i,i,i,i,i,i,i,i,o,o,o,o,o,i,i,o,o,o,o,i,o,o,o,o });
-            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(new[] { i,i,i,i,o,o,o,i,i,o,o,o,o,o,o,i,o,o,o,o,o,i,o,o,o,o });
-            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(new[] { i,o,o,i,o,o,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o });
-            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(new[] { o,i,i,i,i,i,i,i,i,i,o,o,o,o,o,o,o,o,o,o,o,o,o,o,i,o });
-            var scorer = new RunScorer();
-            Assert.AreEqual(11,scorer.Score(ref unusedCalcState));
-        }
-    }
-    [TestClass]
-    public class Test2Dups
-    {
-        [TestMethod]
-        public void DupsHigh()
-        {
-            //2B 3B
-            //4B 5B 6B
-            RunCalcTestUtil.AssertCorrectScoreFound(2,
-                new[] { "2Bb_0", "3Bb_0", "4Bb_0", "5Bb*0", "6Bb*0"  },
-                new[] { "5Bh_1", "6Bh_1" }
-            );
-        }
-        [TestMethod]
-        public void DupsMid()
-        {
-            //2B 3B 4B 
-            //3B 4B 5B 
-            RunCalcTestUtil.AssertCorrectScoreFound(0,
-                new[] { "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0" },
-                new[] { "3Bh_1", "4Bh_1" }
-            );
-        }
-        [TestMethod]
-        public void DupsLow()
-        {
-            //2B 3B 
-            //2B 3B 4B 5B 6B
-            RunCalcTestUtil.AssertCorrectScoreFound(2,
-                new[] { "2Bb*0", "3Bb*0", "4Bb_0", "5Bb_0", "6Bb_0" },
-                new[] { "2Bh_1", "3Bh_1" }
-            );
-        }
-    }
-    [TestClass]
-    public class Test3Dups
-    {
-        [TestMethod]
-        public void DupsHigh()
-        {
-            RunCalcTestUtil.AssertCorrectScoreFound(0,
-                new[] { "2Bb_0", "3Bb_0", "4Bb_0", "5Bb*0", "6Bb*0"  },
-                new[] { "4Bh_1", "5Bh_1", "6Bh_1" }
-            );
-        }
-        [TestMethod]
-        public void DupsMid()
-        {
-            //1B 2B 3B 4B 
-            //3B 4B 5B 6B
-            RunCalcTestUtil.AssertCorrectScoreFound(0,
-                new[] { "1Bh_0", "2Bb_0", "3Bb*0", "4Bb*0", "5Bb_0", "6Bb_0"  },
-                new[] { "2Bh_1", "3Bh_1", "4Bh_1" }
-            );
-        }
-        [TestMethod]
-        public void DupsLow()
-        {
-            //should get
-            //2B 3B
-            //5B
-            //2B 3B 4B 5B 6B
-
-            //but will get
-            //2B 3B 4B 5B
-            //2B 3B
-            //5B 6B
-            RunCalcTestUtil.AssertCorrectScoreFound(3,
-                new[] { "2Bb*0", "3Bb*0", "4Bb_0", 
-                    "5Bb*0", "6Bb_0" },
-                new[] { "2Bh_1", "3Bh_1", 
-                    "5Bh_1"}
-            );
-            //just trying all combinations of 3 partions with mini's no good since
-            // 1 23 4   wouldn't be hit
+            //9
+            var unusedCalcState = new UnusedTilesState();
+            //                                                          12345678901234567890123456789012
+            //                                                          123456789ABCD123456789ABCD
+            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b01011101010000001000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b01010000000000000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b00000000000000000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b00000101110000000000000000_000000);
+            //                                                        12345678901234567890123456789012
+            //                                                        123456789ABCD123456789ABCD
+            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b01111111110000011000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b11110001100000010000010000_000000);
+            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b10010010000000000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b01111111110100000000000000_000000);
+            var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
+            {
+                //                                                             12345678901234567890123456789012
+                //                                                             123456789ABCD123456789ABCD
+                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000010000000000) { ScoreIfValid=1 } },
+                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000001100000010000010000000000) { ScoreIfValid=4 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
+            }));
+            Assert.AreEqual(9,scorer.Score(ref unusedCalcState));
         }
     }
 }

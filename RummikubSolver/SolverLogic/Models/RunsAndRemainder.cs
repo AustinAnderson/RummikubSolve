@@ -8,7 +8,7 @@ namespace SolverLogic.Models
 {
     public class RunsAndRemainder
     {
-        public List<FastCalcTile[]> Runs {get;set;}
-        public List<FastCalcTile> Remainder {get;set;}
+        public List<Tile[]> Runs {get;set;}
+        public List<Tile> Remainder {get;set;}
     }
 }

@@ -15,16 +15,16 @@ namespace SolverLogic.Models
         {
             this.groups = groups;
         }
-        public void MarkUnusedForConf(ref UsedTilesState tilesState,GroupConf conf)
+        public void MarkUnusedForConf(ref UnusedTilesState tilesState,GroupConf conf)
         {
             for(int i = 0; i < groups.Count; i++)
             {
                 groups[i].MarkUsedForSelected(ref tilesState, conf[i]);
             }
         }
-        public List<FastCalcTile[]> GetGroupsForKey(GroupConf conf)
+        public List<Tile[]> GetGroupsForKey(GroupConf conf)
         {
-            var list=new List<FastCalcTile[]>();
+            var list=new List<Tile[]>();
             for(int i = 0; i < groups.Count; i++)
             {
                 list.Add(groups[i].GetGroupForPossibilityKey(conf[i]));

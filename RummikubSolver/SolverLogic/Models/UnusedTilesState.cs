@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace SolverLogic.Models
 {
-    public struct UsedTilesState
+    public struct UnusedTilesState
     {
-        public UsedTilesState()
+        public UnusedTilesState()
         {
             InvalidIfUnusedFlags = new BitVector32[4];
             UnusedInGroupsFlags = new BitVector32[4];
         }
-        public UsedTilesState(TileSetForCurrentHand tileSet)
+        public UnusedTilesState(TileSetForCurrentHand tileSet)
         {
             InvalidIfUnusedFlags = new BitVector32[4];
             UnusedInGroupsFlags = new BitVector32[4];
@@ -22,15 +22,7 @@ namespace SolverLogic.Models
             {
                 if(tile.IsBoardTile && tile.EquivalentHandTileId == null)
                 {
-                    //           11   1111111222222
-                    //0123456789012   3456789012345
-                    //123456789ABCD   123456789ABCD
-                    int ndx = tile.Number;
-                    if (tile.Originality != 0)
-                    {
-                        ndx += 13;
-                    }
-                    InvalidIfUnusedFlags[(int)tile.Color][ndx] = true;
+                    InvalidIfUnusedFlags[(int)tile.Color][tile.CanonicalIndex] = true;
                 }
             }
         }

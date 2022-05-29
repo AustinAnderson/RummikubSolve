@@ -46,8 +46,8 @@ namespace UnitTests
         }
         public static void AssertCurrentUsedMatches(IEnumerable<Tile> expectedUsed, MaxGroup group, int key)
         {
-            var actualState = new UsedTilesState();
-            var expectedState = new UsedTilesState();
+            var actualState = new UnusedTilesState();
+            var expectedState = new UnusedTilesState();
             group.MarkUsedForSelected(ref actualState, key);
             foreach (var tile in expectedUsed)
             {
@@ -61,7 +61,7 @@ namespace UnitTests
             if (expected == null) Assert.Inconclusive();//false positive CS8604
             var selected=string.Join(",",group.GetGroupForPossibilityKey(key).Select(x=>x.ToString()));
 #pragma warning disable CS8604 
-            var expectedStr=string.Join(",",expected.Select(t => t.ToFastCalcTile().ToString()).ToArray());
+            var expectedStr=string.Join(",",expected.Select(t => t.ToString()).ToArray());
 #pragma warning restore CS8604 
             Assert.AreEqual(expectedStr,selected,"selected groups don't match");
         }

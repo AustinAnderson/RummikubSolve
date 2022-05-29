@@ -28,7 +28,7 @@ namespace RunsRainbowTableGenerator
         }
         public override string ToString() 
         {
-            return Convert.ToString(Data, 2);
+            return Convert.ToString(Data, 2).PadLeft(32,'0');
         }
         public bool this[int index]
         {
