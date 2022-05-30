@@ -53,10 +53,10 @@ namespace TestRunCalc
             {
                 //                                                             12345678901234567890123456789012
                 //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000000000000000)},
-                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000000000000000000000000)}
+                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000000000000000)},
+                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000000000000000000000000)}
             }));
             Assert.AreEqual(4,scorer.Score(ref unusedCalcState));
 
@@ -97,10 +97,10 @@ namespace TestRunCalc
             {
                 //                                                             12345678901234567890123456789012
                 //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000000000000000)},
-                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000000000000000000000000)}
+                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000000000000000)},
+                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000000000000000000000000)}
             }));
             Assert.AreEqual(int.MaxValue,scorer.Score(ref unusedCalcState));
         }
@@ -129,10 +129,10 @@ namespace TestRunCalc
             {
                 //                                                             12345678901234567890123456789012
                 //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data, new RunResult(0b00000000000000000000010000000000) { ScoreIfValid=1 } },
-                { unusedCalcState.UnusedInGroupsFlags[r].Data, new RunResult(0b00000001100000010000010000000000) { ScoreIfValid=4 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
+                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000010000000000) { ScoreIfValid=1 } },
+                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000001100000010000010000000000) { ScoreIfValid=4 } },
+                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
+                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
             }));
             Assert.AreEqual(9,scorer.Score(ref unusedCalcState));
         }
