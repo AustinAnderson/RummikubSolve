@@ -47,6 +47,7 @@ namespace SolverLogic.Models
         }
         private readonly List<Tile> allGroup;
         public int PossibilityCount { get; private set; }
+        private BitVectorPerColor[] orsPerPossibility;
         public MaxGroup(List<Tile> tilesFound)
         {
             allGroup = tilesFound;
@@ -83,6 +84,18 @@ namespace SolverLogic.Models
                 }
                 lastColor = tilesFound[i].Color;
             }
+            orsPerPossibility = new BitVectorPerColor[PossibilityCount];
+            for(int key = 0; key < PossibilityCount; key++)
+            {
+                var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
+                for(int i = 0; i < allGroup.Count; i++)
+                {
+                    if(res.excludes.Contains(i))
+                    {
+                        orsPerPossibility[key].SetColorBit(allGroup[i].Color, allGroup[i].CanonicalIndex, true);
+                    }
+                }
+            }
         }
         public Tile[] GetGroupForPossibilityKey(int key)
         {
@@ -103,16 +116,7 @@ namespace SolverLogic.Models
         }
         public void MarkUnusedForSelected(ref UnusedTilesState unusedTiles, int key)
         {
-            var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
-            if (res.size == 0) return;
-            int unusedBitNdx = allGroup[0].CanonicalIndex;
-            for(int i = 0; i < allGroup.Count; i++)
-            {
-                if(!res.excludes.Contains(i))
-                {
-                    unusedTiles.UnusedInGroupsFlags[(int)allGroup[i].Color][unusedBitNdx] = true;
-                }
-            }
+            unusedTiles.UnusedInGroupsFlags.OrEquals(ref orsPerPossibility[key]);
         }
         public static IComparer<MaxGroup> Comparer { get; } = Comparer<MaxGroup>.Create((x, y) => x.allGroup[0].Number - y.allGroup[0].Number);
         public override string ToString()

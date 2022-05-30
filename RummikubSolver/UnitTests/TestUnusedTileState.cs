@@ -51,7 +51,7 @@ namespace UnusedTileState
             expecteds[y] = new BitVector32(0b_1000011111100_0000000001100_000000);
             for(int i=0;i< 4; i++)
             {
-                Assert.AreEqual(expecteds[i].ToString(), bitMaps.InvalidIfUnusedFlags[i].ToString(),$"failed for color {(TileColor)i}");
+                Assert.AreEqual(expecteds[i].ToString(), bitMaps.InvalidIfUnusedFlags.GetBitVectorCopy((TileColor)i).ToString(),$"failed for color {(TileColor)i}");
             }
         }
     }

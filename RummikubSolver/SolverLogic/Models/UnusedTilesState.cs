@@ -11,18 +11,21 @@ namespace SolverLogic.Models
     {
         public UnusedTilesState()
         {
-            InvalidIfUnusedFlags = new BitVector32[4];
-            UnusedInGroupsFlags = new BitVector32[4];
+            InvalidIfUnusedFlags = new BitVectorPerColor();
+            UnusedInGroupsFlags = new BitVectorPerColor();
         }
         public UnusedTilesState(TileSetForCurrentHand tileSet)
         {
-            InvalidIfUnusedFlags = new BitVector32[4];
-            UnusedInGroupsFlags = new BitVector32[4];
+            InvalidIfUnusedFlags = new BitVectorPerColor();
+            UnusedInGroupsFlags = new BitVectorPerColor();
             foreach (var tile in tileSet.Tiles)
             {
                 if(tile.IsBoardTile && tile.EquivalentHandTileId == null)
                 {
-                    InvalidIfUnusedFlags[(int)tile.Color][tile.CanonicalIndex] = true;
+                    //I'm pretty sure this would return a copy of the bv32 and then set a bit on the copy
+                    //InvalidIfUnusedFlags[(int)tile.Color][tile.CanonicalIndex] = true;
+                    //so 
+                    InvalidIfUnusedFlags.SetColorBit(tile.Color, tile.CanonicalIndex, true);
                 }
             }
         }
@@ -35,19 +38,19 @@ namespace SolverLogic.Models
         /// intended to be fully read only, don't set bits
         /// </para>
         /// </summary>
-        public BitVector32[] InvalidIfUnusedFlags { get; }
-        public void ClearToBaseUnused(ref UnusedTilesState baseUnused)
-        {
-            for(int i = 0; i < UnusedInGroupsFlags.Length; i++)
-            {
-                //bv32 is struct so this makes a copy so further changes
-                //dont change baseUnused
-                UnusedInGroupsFlags[i] = baseUnused.UnusedInGroupsFlags[i];
-            }
-        }
+        public BitVectorPerColor InvalidIfUnusedFlags;
         //set the flag according to key 123456789ABCD123456789ABCD
         //for used in the groups, then the int with match the index of the runs look up table
-        public BitVector32[] UnusedInGroupsFlags { get; }
+        /// <summary>
+        /// get private set
+        /// </summary>
+        public BitVectorPerColor UnusedInGroupsFlags;
+        public void ClearToBaseUnused(ref UnusedTilesState baseUnused)
+        {
+            //rely on value type (FourArray) copy to reinitialize without changing baseUnused
+            //on subseqent changing
+            UnusedInGroupsFlags = baseUnused.UnusedInGroupsFlags;
+        }
 
         private static readonly Dictionary<(bool, bool), char> ToStringLookup = new Dictionary<(bool, bool), char>
         {
@@ -62,12 +65,15 @@ namespace SolverLogic.Models
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
             sb.AppendLine("_123456789ABCD123456789ABCD");
-            for(int i= 0; i < UnusedInGroupsFlags.Length; i++)
+            for(int i= 0; i < 4; i++)
             {
                 sb.Append(((TileColor)i).Char());
                 for(int j = 0; j < 32; j++)
                 {
-                    sb.Append(ToStringLookup[(InvalidIfUnusedFlags[i][j],UnusedInGroupsFlags[i][j])]);
+                    sb.Append(ToStringLookup[(
+                        InvalidIfUnusedFlags.GetBitVectorCopy((TileColor)i)[j],
+                        UnusedInGroupsFlags.GetBitVectorCopy((TileColor)i)[j]
+                    )]);
                 }
                 sb.AppendLine();
             }

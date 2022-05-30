@@ -37,9 +37,11 @@ namespace SolverLogic.Models
                 {
                     //sorted by number,color,!isBoard; that means if two next to each other
                     //first is board and second is hand
-                    tiles[i].EquivalentHandTileId = tiles[i + 1].Id;
+                    //set to i+1 since that's the id that will be assigned to tiles[i+1] next iteration
+                    tiles[i].EquivalentHandTileId = i + 1;
                 }
             }
+            //handle the fact the loop stops one early
             tiles[tiles.Count-1].Id = tiles[tiles.Count-2].Id+1;
             Tiles = tiles;
         }

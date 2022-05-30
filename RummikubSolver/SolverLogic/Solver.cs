@@ -28,7 +28,7 @@ namespace SolverLogic
             var baseUnusedTiles= new UnusedTilesState();
             foreach(var tile in groupBaseUnused)
             {
-                baseUnusedTiles.UnusedInGroupsFlags[(int)tile.Color][tile.CanonicalIndex] = true;
+                baseUnusedTiles.UnusedInGroupsFlags.SetColorBit(tile.Color, tile.CanonicalIndex, true);
             }
             var unusedTilesState = new UnusedTilesState(tileSet);
             groups.Sort(MaxGroup.Comparer);
@@ -83,6 +83,7 @@ namespace SolverLogic
             GroupConf solutionKey = default;
             var groupIterable = new MaxGroupIterable(groups);
             var scorer = new RunScorer(rainbowTable);
+            UnusedTilesState solutionGroupUnused;
             for(int i = 0; i < confs.Length; i++)
             {
                 var conf = confs[i];
@@ -91,6 +92,7 @@ namespace SolverLogic
                 int currentScore = scorer.Score(ref unusedTilesState);
                 if (currentScore < score)
                 {
+                    solutionGroupUnused = unusedTilesState;
                     score = currentScore;
                     solutionKey = conf;
                 }
@@ -107,8 +109,8 @@ namespace SolverLogic
                 Console.WriteLine("no solution found");
             }
             //with the solution key, pick that configuration of groups,
-            var allGroups= new MaxGroupIterable(groups);
-            var finalGroups=allGroups.GetGroupsForKey(solutionKey);
+            var allGroups = new MaxGroupIterable(groups);
+            var finalGroups = allGroups.GetGroupsForKey(solutionKey);
             //and now actually find the most possible runs with the remaining tiles
 
             var finder = new RunFinder(new RunSolver());

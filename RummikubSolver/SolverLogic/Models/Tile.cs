@@ -61,8 +61,8 @@ namespace SolverLogic.Models
         }
 
         public static IComparer<Tile> Comparer => new TileComparer();
-        public string DebugDisplay => $"({Id:X2})|{""+Number,2}{Color.ToString()[0]} {(IsBoardTile?"b":"h")}{(EquivalentHandTileId==null?" ":"*")}_{Originality}";
-        //public override string ToString() => $"{ConsoleColor.TileBackground}({Id:X2})|{ConsoleColor.ResetCode}{Color.ColorCode()}{Number:00}{ConsoleColor.ResetCode}";
+        public string DebugDisplay => $"({Id:X2})|{""+Number,2}{Color.ToString()[0]} {(IsBoardTile?"b":"h")}" +
+            $"{(EquivalentHandTileId==null?"   ":$"={EquivalentHandTileId:X2}")}_{Originality}";
         public override string ToString() => DebugDisplay;
         public string DisplayString => $"{ConsoleColor.TileBackground}|{ConsoleColor.ResetCode}{Color.ColorCode()}{Number,-2}{ConsoleColor.TileBackground}|{ConsoleColor.ResetCode}";
         private class TileComparer : IComparer<Tile>

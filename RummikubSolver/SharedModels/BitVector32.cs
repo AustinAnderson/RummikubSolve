@@ -35,6 +35,14 @@ namespace RunsRainbowTableGenerator
             get => GetBit(data, index);
             set => SetBit(ref data, index, value);
         }
+        /// <summary>
+        /// this.Data |= other.Data;
+        /// </summary>
+        /// <param name="other"></param>
+        public void OrEquals(ref BitVector32 other)
+        {
+            data |= other.data;
+        }
         public static bool GetBit(uint dataRef, int index)
         {
             //            12345678901234567890123456789012

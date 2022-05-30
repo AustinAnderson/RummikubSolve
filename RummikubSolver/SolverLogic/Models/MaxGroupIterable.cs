@@ -27,7 +27,11 @@ namespace SolverLogic.Models
             var list=new List<Tile[]>();
             for(int i = 0; i < groups.Count; i++)
             {
-                list.Add(groups[i].GetGroupForPossibilityKey(conf[i]));
+                var group = groups[i].GetGroupForPossibilityKey(conf[i]);
+                if (group.Length > 0)
+                {
+                    list.Add(group);
+                }
             }
             return list;
         }

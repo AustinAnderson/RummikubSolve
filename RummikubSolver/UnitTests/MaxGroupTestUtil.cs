@@ -51,7 +51,7 @@ namespace UnitTests
             group.MarkUnusedForSelected(ref actualState, key);
             foreach (var tile in expectedUnused)
             {
-                expectedState.UnusedInGroupsFlags[(int)tile.Color][tile.CanonicalIndex] = true;
+                expectedState.UnusedInGroupsFlags.SetColorBit(tile.Color, tile.CanonicalIndex, true);
             }
             Assert.AreEqual(expectedState.ToString(), actualState.ToString(), "expected unused numbers to match for key 123456789ABCD123456789ABCD");
         }

@@ -17,7 +17,22 @@ namespace SolverLogic.Models
                 Tile = tile;
             }
             public Tile Tile { get; private set; }
-            public RefTile? HandEq { get; set; }
+            private RefTile? handEq;
+            public RefTile? HandEq {
+                get => handEq;
+                set
+                {
+                    if (!Tile.IsBoardTile)
+                    {
+                        throw new InvalidOperationException($"this tile '{Tile}' is a hand tile, so setting equivalent hand tile is meaningless");
+                    }
+                    if (value==null || !value.Tile.SameValue(Tile) || value.Tile.IsBoardTile)
+                    {
+                        throw new ArgumentException($"tile '{value?.Tile}' cannot be the hand equivalent of this tile '{Tile}'");
+                    }
+                    handEq = value;
+                }
+            }
             public void SwapIfEquivalent()
             {
                 if(HandEq != null)

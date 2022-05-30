@@ -60,7 +60,7 @@ namespace SolverLogic.Models
         {
             int max = (16 + 64) / 3;
             string digits = "";
-            for(int i = max-1; i >=0 ; i--)
+            for(int i = 0; i < max; i++)
             {
                 digits += this[i];
             }

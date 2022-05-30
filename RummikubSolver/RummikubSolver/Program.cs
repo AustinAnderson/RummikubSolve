@@ -3,9 +3,14 @@ using RunsRainbowTableGenerator;
 using SharedModels;
 using SolverLogic;
 using SolverLogic.Models;
+using System.Diagnostics;
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine("Loading table...");
+var watch = new Stopwatch();
+watch.Start();
 var table=new RunResultRainbowTable(Environment.ExpandEnvironmentVariables("%TEMP%"));
+watch.Stop();
+Console.WriteLine("Table load done in "+watch.Elapsed.TotalSeconds+ " seconds");
 var solver = new Solver(
     new TileSetForCurrentHand(
                 ("6Y,7Y,8Y,9Y,10Y 2B,3B,4B,5B,6B " +
@@ -19,14 +24,14 @@ var solver = new Solver(
 var res = await solver.Solve();
 foreach(var group in res.Groups)
 {
-    Console.WriteLine(string.Join(" ",group));
+    Console.WriteLine(string.Join(" ",group.Select(t=>t.DisplayString)));
 }
 foreach(var run in res.Runs)
 {
-    Console.WriteLine(string.Join(" ", run));
+    Console.WriteLine(string.Join(" ", run.Select(t=>t.DisplayString)));
 }
 Console.WriteLine("------------------------------------------------------------------");
-Console.WriteLine(string.Join("        ", res.Hand));
+Console.WriteLine(string.Join("        ", res.Hand.Select(t=>t.DisplayString)));
 //which one is missing is which bit is set when counting in bin
 //1 2 3 4 5 | 0 0 0 0 0
 //1 2 3 4   | 0 0 0 0 1
@@ -35,5 +40,3 @@ Console.WriteLine(string.Join("        ", res.Hand));
 //if & the two != 0 then invalid, else score is bit count of unused
 //which can be stored in the top 6 bits of the lookup value
 
-
-//... but first have to make an algo to accurately find the runs

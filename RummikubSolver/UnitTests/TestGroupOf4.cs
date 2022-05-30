@@ -16,7 +16,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected=new List<Tile>();
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,0);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,0);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,0);
         }
         [TestMethod]
         public void FirstGroupOf3Option()
@@ -25,7 +25,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected = tiles.TileExcept("3B");
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,1);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,1);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,1);
         }
         [TestMethod]
         public void SecondGroupOf3Option()
@@ -34,7 +34,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected = tiles.TileExcept("3R");
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,2);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,2);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,2);
         }
         [TestMethod]
         public void ThirdGroupOf3Option()
@@ -43,7 +43,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected = tiles.TileExcept("3T");
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,3);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,3);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,3);
         }
         [TestMethod]
         public void FourthGroupOf3Option()
@@ -52,7 +52,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected = tiles.TileExcept("3Y");
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,4);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,4);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,4);
         }
         [TestMethod]
         public void AllOption()
@@ -61,7 +61,7 @@ namespace TestMaxGroupIteration
             var group = new MaxGroup(tiles);
             var selected = tiles;
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,5);
-            MaxGroupTestUtil.AssertCurrentUnusedMatches(selected, group,5);
+            MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,5);
         }
     }
 }

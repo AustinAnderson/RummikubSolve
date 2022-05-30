@@ -35,28 +35,40 @@ namespace TestRunCalc
             //Y (4h 5h 6b) (Ab Bb Cb*)
             //9
             var unusedCalcState = new UnusedTilesState();
-            //                                                                     bit cleared on r row because hand tile
-            //                                                                     v
-            //                                                           1234567890123 4567890123456 789012
-            //                                                           123456789ABCD 123456789ABCD
-            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b_0001110001100_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b_0001100000000_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b_0000000000000_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b_0000010001100_0000000000000_000000);
-            //                                                         1234567890123 4567890123456 789012
-            //                                                         123456789ABCD 123456789ABCD
-            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b_0011110011100_0011000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b_0011100010100_0010000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b_1001001000000_0000000000000_000000);
-            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b_0001110001110_0000000000000_000000);
+            //                                      bit cleared on r row because hand tile
+            //                                      v
+            //                            1234567890123 4567890123456 789012
+            //                            123456789ABCD 123456789ABCD
+            var invB = new BitVector32(0b_0001110001100_0000000000000_000000);
+            var invR = new BitVector32(0b_0001100000000_0000000000000_000000);
+            var invT = new BitVector32(0b_0000000000000_0000000000000_000000);
+            var invY = new BitVector32(0b_0000010001100_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.BLACK, invB);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.RED, invR);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.TEAL, invT);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.YELLOW, invY);
+            //                               1234567890123 4567890123456 789012
+            //                               123456789ABCD 123456789ABCD
+            var unusedB = new BitVector32(0b_0011110011100_0011000010000_000000);
+            var unusedR = new BitVector32(0b_0011100010100_0010000010000_000000);
+            var unusedT = new BitVector32(0b_1001001000000_0000000000000_000000);
+            var unusedY = new BitVector32(0b_0001110001110_0000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.BLACK, unusedB);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.RED, unusedR);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.TEAL, unusedT);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.YELLOW, unusedY);
+            var keyB = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.BLACK).Data >> 6;
+            var keyR = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.RED).Data >> 6;
+            var keyT = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.TEAL).Data >> 6;
+            var keyY = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.YELLOW).Data >> 6;
             var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
             {
-                //                                                             12345678901234567890123456789012
-                //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000000000000000)},
-                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000000000000000000000000)}
+                //                      12345678901234567890123456789012
+                //                      123456789ABCD123456789ABCD
+                { keyB, new RunResult(0b00000000000000000000000000000000)},
+                { keyR, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { keyT, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { keyY, new RunResult(0b00000000000000000000000000000000)}
             }));
             Assert.AreEqual(4,scorer.Score(ref unusedCalcState));
 
@@ -79,28 +91,40 @@ namespace TestRunCalc
             //Y (4h 5h 6b) (Ab Bb Cb*)
             //9
             var unusedCalcState = new UnusedTilesState();
-            //                                                                     bit set on r row because board tile
-            //                                                                     v
-            //                                                           1234567890123 4567890123456 789012
-            //                                                           123456789ABCD 123456789ABCD
-            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b_0001110001100_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b_0001100000100_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b_0000000000000_0000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b_0000010001100_0000000000000_000000);
-            //                                                         1234567890123 4567890123456 789012
-            //                                                         123456789ABCD 123456789ABCD
-            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b_0011110011100_0011000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b_0011100010100_0010000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b_1001001000000_0000000000000_000000);
-            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b_0001110001110_0000000000000_000000);
+            //                                      bit set on r row because board tile
+            //                                      v
+            //                            1234567890123 4567890123456 789012
+            //                            123456789ABCD 123456789ABCD
+            var invB = new BitVector32(0b_0001110001100_0000000000000_000000);
+            var invR = new BitVector32(0b_0001100000100_0000000000000_000000);
+            var invT = new BitVector32(0b_0000000000000_0000000000000_000000);
+            var invY = new BitVector32(0b_0000010001100_0000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.BLACK, invB);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.RED, invR);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.TEAL, invT);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.YELLOW, invY);
+            //                               1234567890123 4567890123456 789012
+            //                               123456789ABCD 123456789ABCD
+            var unusedB = new BitVector32(0b_0011110011100_0011000010000_000000);
+            var unusedR = new BitVector32(0b_0011100010100_0010000010000_000000);
+            var unusedT = new BitVector32(0b_1001001000000_0000000000000_000000);
+            var unusedY = new BitVector32(0b_0001110001110_0000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.BLACK, unusedB);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.RED, unusedR);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.TEAL, unusedT);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.YELLOW, unusedY);
+            var keyB = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.BLACK).Data >> 6;
+            var keyR = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.RED).Data >> 6;
+            var keyT = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.TEAL).Data >> 6;
+            var keyY = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.YELLOW).Data >> 6;
             var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
             {
-                //                                                             12345678901234567890123456789012
-                //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000000000000000)},
-                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000000000000000000000000)}
+                //                      12345678901234567890123456789012
+                //                      123456789ABCD123456789ABCD
+                { keyB, new RunResult(0b00000000000000000000000000000000)},
+                { keyR, new RunResult(0b00000000101000000000000000000000) { ScoreIfValid=2 } },
+                { keyT, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
+                { keyY, new RunResult(0b00000000000000000000000000000000)}
             }));
             Assert.AreEqual(int.MaxValue,scorer.Score(ref unusedCalcState));
         }
@@ -113,26 +137,38 @@ namespace TestRunCalc
             //Y (2 3 4 5 6 7 8 9 A) (C)
             //9
             var unusedCalcState = new UnusedTilesState();
-            //                                                          12345678901234567890123456789012
-            //                                                          123456789ABCD123456789ABCD
-            unusedCalcState.InvalidIfUnusedFlags[b] = new BitVector32(0b01011101010000001000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[r] = new BitVector32(0b01010000000000000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[t] = new BitVector32(0b00000000000000000000000000_000000);
-            unusedCalcState.InvalidIfUnusedFlags[y] = new BitVector32(0b00000101110000000000000000_000000);
-            //                                                        12345678901234567890123456789012
-            //                                                        123456789ABCD123456789ABCD
-            unusedCalcState.UnusedInGroupsFlags[b]= new BitVector32(0b01111111110000011000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[r]= new BitVector32(0b11110001100000010000010000_000000);
-            unusedCalcState.UnusedInGroupsFlags[t]= new BitVector32(0b10010010000000000000000000_000000);
-            unusedCalcState.UnusedInGroupsFlags[y]= new BitVector32(0b01111111110100000000000000_000000);
+            //                           12345678901234567890123456 789012
+            //                           123456789ABCD123456789ABCD
+            var invB = new BitVector32(0b01011101010000001000000000_000000);
+            var invR = new BitVector32(0b01010000000000000000000000_000000);
+            var invT = new BitVector32(0b00000000000000000000000000_000000);
+            var invY = new BitVector32(0b00000101110000000000000000_000000);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.BLACK, invB);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.RED, invR);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.TEAL, invT);
+            unusedCalcState.InvalidIfUnusedFlags.SetBitVectorForColor(TileColor.YELLOW, invY);
+            //                              12345678901234567890123456 789012
+            //                              123456789ABCD123456789ABCD
+            var unusedB = new BitVector32(0b01111111110000011000010000_000000);
+            var unusedR = new BitVector32(0b11110001100000010000010000_000000);
+            var unusedT = new BitVector32(0b10010010000000000000000000_000000);
+            var unusedY = new BitVector32(0b01111111110100000000000000_000000);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.BLACK, unusedB);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.RED, unusedR);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.TEAL, unusedT);
+            unusedCalcState.UnusedInGroupsFlags.SetBitVectorForColor(TileColor.YELLOW, unusedY);
+            var keyB = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.BLACK).Data >> 6;
+            var keyR = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.RED).Data >> 6;
+            var keyT = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.TEAL).Data >> 6;
+            var keyY = unusedCalcState.UnusedInGroupsFlags.GetBitVectorCopy(TileColor.YELLOW).Data >> 6;
             var scorer = new RunScorer(new MockRunResultRainbowTable(new Dictionary<uint,RunResult>
             {
-                //                                                             12345678901234567890123456789012
-                //                                                             123456789ABCD123456789ABCD
-                { unusedCalcState.UnusedInGroupsFlags[b].Data>>6, new RunResult(0b00000000000000000000010000000000) { ScoreIfValid=1 } },
-                { unusedCalcState.UnusedInGroupsFlags[r].Data>>6, new RunResult(0b00000001100000010000010000000000) { ScoreIfValid=4 } },
-                { unusedCalcState.UnusedInGroupsFlags[t].Data>>6, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
-                { unusedCalcState.UnusedInGroupsFlags[y].Data>>6, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
+                //                      12345678901234567890123456789012
+                //                      123456789ABCD123456789ABCD
+                { keyB, new RunResult(0b00000000000000000000010000000000) { ScoreIfValid=1 } },
+                { keyR, new RunResult(0b00000001100000010000010000000000) { ScoreIfValid=4 } },
+                { keyT, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
+                { keyY, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
             }));
             Assert.AreEqual(9,scorer.Score(ref unusedCalcState));
         }
