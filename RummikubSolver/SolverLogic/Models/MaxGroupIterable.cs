@@ -19,7 +19,7 @@ namespace SolverLogic.Models
         {
             for(int i = 0; i < groups.Count; i++)
             {
-                groups[i].MarkUsedForSelected(ref tilesState, conf[i]);
+                groups[i].MarkUnusedForSelected(ref tilesState, conf[i]);
             }
         }
         public List<Tile[]> GetGroupsForKey(GroupConf conf)

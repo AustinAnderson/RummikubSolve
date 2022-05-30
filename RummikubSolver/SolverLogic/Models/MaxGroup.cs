@@ -101,16 +101,16 @@ namespace SolverLogic.Models
             return group;
             
         }
-        public void MarkUsedForSelected(ref UnusedTilesState usedTiles, int key)
+        public void MarkUnusedForSelected(ref UnusedTilesState unusedTiles, int key)
         {
             var res=SizeAndExcludeMapByPossibilitySelected[PossibilityCount][key];
             if (res.size == 0) return;
-            int usedBitNdx = allGroup[0].Number + allGroup[0].Originality * 13;
+            int unusedBitNdx = allGroup[0].CanonicalIndex;
             for(int i = 0; i < allGroup.Count; i++)
             {
                 if(!res.excludes.Contains(i))
                 {
-                    usedTiles.UnusedInGroupsFlags[(int)allGroup[i].Color][usedBitNdx] = true;
+                    unusedTiles.UnusedInGroupsFlags[(int)allGroup[i].Color][unusedBitNdx] = true;
                 }
             }
         }

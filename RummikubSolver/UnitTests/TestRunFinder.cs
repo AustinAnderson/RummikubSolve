@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RunsRainbowTableGenerator.Logic;
 using SolverLogic;
 using System;
 using System.Collections.Generic;
@@ -14,13 +15,14 @@ namespace UnitTests
         [TestMethod]
         public void TestRunFound()
         {
+            var runFinder = new RunFinder(new RunSolver());
             var testTileSet=new TestTileSet();
             var tiles = new[]
             {
                 "1Th", "3Bh", "3Rh", "6Bb", "6Yb", "9Bh", "9Rh", "ABb", "AYb",
                 "4Bb", "4Rb", "4Th", "4Yh", "5Rb", "5Bb", "5Yh", "BBb", "BYb", "CYb*"
             }.Select(x => testTileSet.MakeTile(x, includeId: false)).ToArray();
-            var results= RunFinder.FindRuns(tiles);
+            var results= runFinder.FindRuns(tiles);
             var found=results.Runs.Select(x=>string.Join(",",x.Select(y=>y.ToString()))).ToArray();
             var expectedRuns = new[]
             {

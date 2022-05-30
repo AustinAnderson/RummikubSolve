@@ -8,7 +8,11 @@ RunSolver solver = new RunSolver();
 var results = new RunResult[(1 << RunSolver.TilesOfSingleColor.Count)];
 for(uint i = 0; i < results.Length; i++)
 {
-    results[i] = solver.SolveForPossibility(i);
+    //   12345678901234567890123456789012
+    //   123456789ABCD123456789ABCD
+    //0b 11111111111111111111111111000000
+    uint possibility = i << 6;
+    results[i] = solver.SolveForPossibility(possibility);
     if (i % 100000 == 0)
     {
         //2^26=67108864, so pad left 8 digits

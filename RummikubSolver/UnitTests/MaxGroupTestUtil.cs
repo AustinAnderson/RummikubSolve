@@ -44,16 +44,15 @@ namespace UnitTests
         {
             return tiles.TileExcept(new[] { new Tile(tileRep) });
         }
-        public static void AssertCurrentUsedMatches(IEnumerable<Tile> expectedUsed, MaxGroup group, int key)
+        public static void AssertCurrentUnusedMatches(IEnumerable<Tile> expectedUnused, MaxGroup group, int key)
         {
             var actualState = new UnusedTilesState();
             var expectedState = new UnusedTilesState();
-            group.MarkUsedForSelected(ref actualState, key);
-            foreach (var tile in expectedUsed)
+            group.MarkUnusedForSelected(ref actualState, key);
+            foreach (var tile in expectedUnused)
             {
-                expectedState.UnusedInGroupsFlags[(int)tile.Color][tile.Number + ((tile.Originality > 0 ? 1 : 0) * 13)] = true;
+                expectedState.UnusedInGroupsFlags[(int)tile.Color][tile.CanonicalIndex] = true;
             }
-            //not used == unused
             Assert.AreEqual(expectedState.ToString(), actualState.ToString(), "expected unused numbers to match for key 123456789ABCD123456789ABCD");
         }
         public static void AssertGroupedMatches([DisallowNull] IEnumerable<Tile> expected, MaxGroup group, int key)

@@ -1,4 +1,5 @@
-﻿using SharedModels;
+﻿using RunsRainbowTableGenerator.Logic;
+using SharedModels;
 using SolverLogic.Models;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,12 @@ namespace SolverLogic
             Stopwatch watch= new Stopwatch();
             watch.Start();
             var groups = MaxGroupFinder.FindMaxGroups(tileSet, out List<Tile> groupBaseUnused);
+            var baseUnusedTiles= new UnusedTilesState();
+            foreach(var tile in groupBaseUnused)
+            {
+                baseUnusedTiles.UnusedInGroupsFlags[(int)tile.Color][tile.CanonicalIndex] = true;
+            }
+            var unusedTilesState = new UnusedTilesState(tileSet);
             groups.Sort(MaxGroup.Comparer);
             int expectedPossibilitiesCount = 1;
 
@@ -72,19 +79,16 @@ namespace SolverLogic
                 currentPossibility++;
             }
 
-            var tilesState = new UnusedTilesState(tileSet);
-            int score = 0;
+            int score = int.MaxValue;
             GroupConf solutionKey = default;
             var groupIterable = new MaxGroupIterable(groups);
             var scorer = new RunScorer(rainbowTable);
             for(int i = 0; i < confs.Length; i++)
             {
                 var conf = confs[i];
-                //var conf=new GroupConf(new[] { 3,1,0,5,0,2,1,1,1,1,0});
-
-                tilesState.ClearUsed();
-                groupIterable.MarkUnusedForConf(ref tilesState,conf);
-                int currentScore = scorer.Score(ref tilesState);
+                unusedTilesState.ClearToBaseUnused(ref baseUnusedTiles);
+                groupIterable.MarkUnusedForConf(ref unusedTilesState,conf);
+                int currentScore = scorer.Score(ref unusedTilesState);
                 if (currentScore < score)
                 {
                     score = currentScore;
@@ -102,18 +106,18 @@ namespace SolverLogic
             {
                 Console.WriteLine("no solution found");
             }
-            /*
             //with the solution key, pick that configuration of groups,
             var allGroups= new MaxGroupIterable(groups);
             var finalGroups=allGroups.GetGroupsForKey(solutionKey);
             //and now actually find the most possible runs with the remaining tiles
-            var finalRuns = RunFinder.FindRuns(
-                baseUnusedFastCalcArray.Concat(allGroups.GetUnusedForKey(solkey).Trim()).ToList()
+
+            unusedTilesState.ClearToBaseUnused(ref baseUnusedTiles);
+            groupIterable.MarkUnusedForConf(ref unusedTilesState, solutionKey);
+            var finder = new RunFinder(new RunSolver());
+            var finalRuns = finder.FindRuns(
+                tileSet.Tiles.Except(finalGroups.SelectMany(t=>t))
             );
             return new SolveResult(tileSet,finalGroups,finalRuns);
-            /*/
-            return null;
-            //*/
         }
     }
 }

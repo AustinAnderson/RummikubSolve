@@ -1,97 +1,12 @@
 ﻿using SharedModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RunsRainbowTableGenerator.Logic
 {
-    public struct DupTrackingInt
-    {
-        public int Int;
-        public bool IsDup;
-        public override string ToString()
-        {
-            string res = "";
-            if (IsDup)
-            {
-                //combining underline
-                res += "\u0332";
-            }
-            res += Int;
-            return res;
-        }
-        public int Index
-        {
-            get
-            {
-                var ndx = Int - 1;//                                 v first dup
-                if (IsDup) ndx += 13;//1,2,3,4,5,6,7,8,9,10,11,12,13,1
-                return ndx;
-            }
-        }
-    }
-    [DebuggerDisplay("{DebugDisplay}")]
-    public class PotentialRun : List<DupTrackingInt>
-    {
-        public string DebugDisplay=> string.Join("", this);
-        //can cheat a little on these because they're garunteed to be unique, contiguous,
-        //and strictly ascending
-        /**<summary>finds the index where the sequence occurs and returns true, or false and -1</summary>**/
-        public bool TryContainsIndex(int[] seq,out int startNdx)
-        {
-            startNdx = -1;
-            // 4 5 
-            // 2 3 4 5 
-            if(Count<seq.Length) return false;
-            bool containsStart = false;
-            int startIndex = 0;
-            for(; startIndex< Count; startIndex++)
-            {
-                if (seq[0] == this[startIndex].Int)
-                {
-                    containsStart = true;
-                    break;
-                }
-            }
-            bool contains = containsStart && (startIndex + seq.Length <= Count);
-            if (contains)
-            {
-                startNdx = startIndex;
-            }
-            return contains;
-        }
-        public bool StartsWith(int[] seq)
-        {
-            if(Count<seq.Length) return false;
-            bool startsWith = true;
-            for(int i = 0; i < seq.Length; i++)
-            {
-                if (seq[i] != this[i].Int)
-                {
-                    startsWith = false;
-                }
-            }
-            return startsWith;
-        }
-        public bool EndsWith(int[] seq)
-        {
-            if(Count<seq.Length) return false;
-            bool containsStart = false;
-            int startIndex = 0;
-            for(; startIndex< Count; startIndex++)
-            {
-                if (seq[0] == this[startIndex].Int)
-                {
-                    containsStart = true;
-                    break;
-                }
-            }
-            return containsStart && (startIndex + seq.Length == Count);
-        }
-    }
     public class RunSolver
     {
         public static readonly IReadOnlyList<int> TilesOfSingleColor = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
@@ -117,12 +32,13 @@ namespace RunsRainbowTableGenerator.Logic
             return Solve(solveWith,solveWithDups);
         }
 
-        public RunResult Solve(List<int> solveWith, List<int> solveWithDups)
+        public List<PotentialRun> GetPotentialRuns(List<int> solveWith, List<int> solveWithDups)
         {
             var originals = GetPotentialRuns(solveWith.Select(x => new DupTrackingInt
             {
                 Int = x,
-                IsDup = false }));
+                IsDup = false 
+            }));
             var dups= GetPotentialRuns(solveWithDups.Select(x => new DupTrackingInt
             {
                 Int = x,
@@ -132,11 +48,15 @@ namespace RunsRainbowTableGenerator.Logic
             ShiftAndSpliceCopies(dups, originals);
             //then any remaining in the other list that can be satisfied with the updated original
             ShiftAndSpliceCopies(originals, dups);
+            return dups.Concat(originals).ToList();
+        }
+        public RunResult Solve(List<int> solveWith, List<int> solveWithDups)
+        {
             //because we're tracking unused as true and it all defaults to false,
             //this will only show unused from the passed in numbers, assuming the numbers not passed in are already used in rummikub groups
             RunResult result= new RunResult();
             int unusedCount = 0;
-            foreach(var unused in dups.Concat(originals).Where(x=>x.Count<3))
+            foreach(var unused in GetPotentialRuns(solveWith,solveWithDups).Where(x=>x.Count<3))
             {
                 foreach(var tile in unused)
                 {

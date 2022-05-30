@@ -16,16 +16,16 @@ namespace SolverLogic
         {
             this.rainbowTable = rainbowTable;
         }
-        public int Score(ref UnusedTilesState usedTiles)
+        public int Score(ref UnusedTilesState unusedTiles)
         {
             int score = 0;
             for (int i = 0; i < 4; i++)
             {
-                var runRes = rainbowTable.GetFor(usedTiles.UnusedInGroupsFlags[i].Data);
+                var runRes = rainbowTable.GetFor(unusedTiles.UnusedInGroupsFlags[i].Data >> 6);
                 //if the unused after getting all the runs with the current set of unused
                 //has any bits in common with the invalidIfUnused bit array,
                 //then this configuration is invalid as a whole
-                if ((runRes.Unused & usedTiles.InvalidIfUnusedFlags[i].Data) != 0)
+                if ((runRes.Unused & unusedTiles.InvalidIfUnusedFlags[i].Data) != 0)
                 {
                     return int.MaxValue;
                 }

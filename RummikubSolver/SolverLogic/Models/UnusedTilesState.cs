@@ -36,11 +36,13 @@ namespace SolverLogic.Models
         /// </para>
         /// </summary>
         public BitVector32[] InvalidIfUnusedFlags { get; }
-        public void ClearUsed()
+        public void ClearToBaseUnused(ref UnusedTilesState baseUnused)
         {
             for(int i = 0; i < UnusedInGroupsFlags.Length; i++)
             {
-                UnusedInGroupsFlags[i] = new BitVector32();
+                //bv32 is struct so this makes a copy so further changes
+                //dont change baseUnused
+                UnusedInGroupsFlags[i] = baseUnused.UnusedInGroupsFlags[i];
             }
         }
         //set the flag according to key 123456789ABCD123456789ABCD
@@ -50,6 +52,7 @@ namespace SolverLogic.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine();
             for(int i= 0; i < UnusedInGroupsFlags.Length; i++)
             {
                 sb.Append(((TileColor)i).Char());
@@ -62,6 +65,7 @@ namespace SolverLogic.Models
                     }
                     sb.Append(UnusedInGroupsFlags[i][j] ? '1' : '0');
                 }
+                sb.AppendLine();
             }
             return sb.ToString();
         }
