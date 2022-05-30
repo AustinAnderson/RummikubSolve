@@ -87,7 +87,7 @@ namespace SolverLogic
             for(int i = 0; i < confs.Length; i++)
             {
                 var conf = confs[i];
-                unusedTilesState.ClearToBaseUnused(ref baseUnusedTiles);
+                unusedTilesState = baseUnusedTiles;
                 groupIterable.MarkUnusedForConf(ref unusedTilesState,conf);
                 int currentScore = scorer.Score(ref unusedTilesState);
                 if (currentScore < score)
