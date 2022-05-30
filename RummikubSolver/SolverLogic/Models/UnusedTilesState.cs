@@ -49,21 +49,25 @@ namespace SolverLogic.Models
         //for used in the groups, then the int with match the index of the runs look up table
         public BitVector32[] UnusedInGroupsFlags { get; }
 
+        private static readonly Dictionary<(bool, bool), char> ToStringLookup = new Dictionary<(bool, bool), char>
+        {
+            //inv,   unused
+            {(false, false),'0'},
+            {(false,  true),'1'},
+            {( true, false),'O'},
+            {( true,  true),'I'},
+        };
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
+            sb.AppendLine("_123456789ABCD123456789ABCD");
             for(int i= 0; i < UnusedInGroupsFlags.Length; i++)
             {
                 sb.Append(((TileColor)i).Char());
                 for(int j = 0; j < 32; j++)
                 {
-                    if (InvalidIfUnusedFlags[i][j])
-                    {
-                        //combining underline
-                        sb.Append("\u0332");
-                    }
-                    sb.Append(UnusedInGroupsFlags[i][j] ? '1' : '0');
+                    sb.Append(ToStringLookup[(InvalidIfUnusedFlags[i][j],UnusedInGroupsFlags[i][j])]);
                 }
                 sb.AppendLine();
             }

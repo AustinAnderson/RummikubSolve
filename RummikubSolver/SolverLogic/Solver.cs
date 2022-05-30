@@ -111,8 +111,6 @@ namespace SolverLogic
             var finalGroups=allGroups.GetGroupsForKey(solutionKey);
             //and now actually find the most possible runs with the remaining tiles
 
-            unusedTilesState.ClearToBaseUnused(ref baseUnusedTiles);
-            groupIterable.MarkUnusedForConf(ref unusedTilesState, solutionKey);
             var finder = new RunFinder(new RunSolver());
             var finalRuns = finder.FindRuns(
                 tileSet.Tiles.Except(finalGroups.SelectMany(t=>t))
