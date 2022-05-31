@@ -44,13 +44,13 @@ namespace SharedModels
         private uint data;
         public uint Data => data;
         public uint Unused => data & ~SCORE_IF_VALID_MASK;
-        public int ScoreIfValid
+        public ushort ScoreIfValid
         {
-            get => (int)(data & SCORE_IF_VALID_MASK);
+            get => (ushort)(data & SCORE_IF_VALID_MASK);
             set
             {
                 data = Unused; //clear out score
-                data |= (uint)value;
+                data |= value;
             }
         } 
         public override string ToString() 

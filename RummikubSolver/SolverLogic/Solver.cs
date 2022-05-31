@@ -12,25 +12,22 @@ namespace SolverLogic
 {
     public class Solver
     {
-        private TileSetForCurrentHand tileSet;
         private readonly IRunResultRainbowTable rainbowTable;
 
-        public Solver(TileSetForCurrentHand tileSet,IRunResultRainbowTable rainbowTable)
+        public Solver(IRunResultRainbowTable rainbowTable)
         {
-            this.tileSet = tileSet;
             this.rainbowTable = rainbowTable;
         }
-        public async Task<SolveResult> Solve()
+        public SolveResult Solve(TileSetForCurrentHand tileSet)
         {
             Stopwatch watch= new Stopwatch();
             watch.Start();
             var groups = MaxGroupFinder.FindMaxGroups(tileSet, out List<Tile> groupBaseUnused);
-            var baseUnusedTiles= new UnusedTilesState();
+            var baseUnusedTiles= new UnusedTilesState(tileSet);
             foreach(var tile in groupBaseUnused)
             {
                 baseUnusedTiles.UnusedInGroupsFlags.SetColorBit(tile.Color, tile.CanonicalIndex, true);
             }
-            var unusedTilesState = new UnusedTilesState(tileSet);
             groups.Sort(MaxGroup.Comparer);
             int expectedPossibilitiesCount = 1;
 
@@ -83,19 +80,19 @@ namespace SolverLogic
             GroupConf solutionKey = default;
             var groupIterable = new MaxGroupIterable(groups);
             var scorer = new RunScorer(rainbowTable);
-            UnusedTilesState solutionGroupUnused;
+            Parallel.For(0,confs.Length,new ParallelOptions { MaxDegreeOfParallelism = 20 }, i =>
+            {
+                //value type so copy
+                var unusedTilesState = baseUnusedTiles;
+                groupIterable.MarkUnusedForConf(ref unusedTilesState,confs[i]);
+                confs[i].score = scorer.Score(ref unusedTilesState);
+            });
             for(int i = 0; i < confs.Length; i++)
             {
-                var conf = confs[i];
-                //value type so copy
-                unusedTilesState = baseUnusedTiles;
-                groupIterable.MarkUnusedForConf(ref unusedTilesState,conf);
-                int currentScore = scorer.Score(ref unusedTilesState);
-                if (currentScore < score)
+                if (confs[i].score < score)
                 {
-                    solutionGroupUnused = unusedTilesState;
-                    score = currentScore;
-                    solutionKey = conf;
+                    score = confs[i].score;
+                    solutionKey = confs[i];
                 }
             }
             watch.Stop();

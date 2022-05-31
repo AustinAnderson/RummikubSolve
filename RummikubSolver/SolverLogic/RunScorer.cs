@@ -16,9 +16,9 @@ namespace SolverLogic
         {
             this.rainbowTable = rainbowTable;
         }
-        public int Score(ref UnusedTilesState unusedTiles)
+        public ushort Score(ref UnusedTilesState unusedTiles)
         {
-            int score = 0;
+            ushort score = 0;
             for (int i = 0; i < 4; i++)
             {
                 var runRes = rainbowTable.GetFor(unusedTiles.UnusedInGroupsFlags.GetBitVectorCopy((TileColor)i).Data >> 6);
@@ -27,7 +27,7 @@ namespace SolverLogic
                 //then this configuration is invalid as a whole
                 if ((runRes.Unused & unusedTiles.InvalidIfUnusedFlags.GetBitVectorCopy((TileColor)i).Data) != 0)
                 {
-                    return int.MaxValue;
+                    return ushort.MaxValue;
                 }
                 score += runRes.ScoreIfValid;
             }

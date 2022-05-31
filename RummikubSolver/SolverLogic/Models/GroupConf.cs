@@ -17,6 +17,7 @@ namespace SolverLogic.Models
         {
             low = 0;
             high = 0;
+            score = 0;
             for(int i = 0; i < values.Length; i++)
             {
                 if (i < SwitchToHighIndex)
@@ -47,7 +48,7 @@ namespace SolverLogic.Models
         }
         private ulong low;
         private ushort high;
-
+        public ushort score;
         public string BitString
         {
             get
@@ -59,7 +60,7 @@ namespace SolverLogic.Models
         public override string ToString()
         {
             int max = (16 + 64) / 3;
-            string digits = "";
+            string digits = ""+score+" ";
             for(int i = 0; i < max; i++)
             {
                 digits += this[i];

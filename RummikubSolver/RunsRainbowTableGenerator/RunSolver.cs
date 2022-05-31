@@ -55,7 +55,7 @@ namespace RunsRainbowTableGenerator.Logic
             //because we're tracking unused as true and it all defaults to false,
             //this will only show unused from the passed in numbers, assuming the numbers not passed in are already used in rummikub groups
             RunResult result= new RunResult();
-            int unusedCount = 0;
+            ushort unusedCount = 0;
             foreach(var unused in GetPotentialRuns(solveWith,solveWithDups).Where(x=>x.Count<3))
             {
                 foreach(var tile in unused)
