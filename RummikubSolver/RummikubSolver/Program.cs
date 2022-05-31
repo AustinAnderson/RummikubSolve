@@ -11,9 +11,8 @@ watch.Start();
 var table=new RunResultRainbowTable(Environment.ExpandEnvironmentVariables("%TEMP%"));
 watch.Stop();
 Console.WriteLine("Table load done in "+watch.Elapsed.TotalSeconds+ " seconds");
-var solver = new Solver(table);
+var solver = new JokerHandlingSolver(table);
 var res = solver.Solve(
-    new TileSetForCurrentHand(
         /*
                 ("").Split(new[] { ',', ' ' }).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new Tile(x.Trim())).ToList(),
         "9T,10B,3B,9R,7Y,9R,5T,10B,4T,12R,13B,1R,2B,13R,5Y,11Y,7T,11Y,12Y,5Y,2T".Split(",").Select(x => new Tile(x.Trim())).ToList()
@@ -24,7 +23,6 @@ var res = solver.Solve(
                 "5R,5Y,5T,5B").Split(new[] { ',', ' ' }).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new Tile(x.Trim())).ToList(),
         "2Y,7B,9B,1T,4T,3Y,5Y,12Y,1R,3R,9R,9R,8R,7T,3B,4Y".Split(",").Select(x => new Tile(x.Trim())).ToList()
         //*/
-    )
 );
 foreach(var group in res.Groups)
 {

@@ -18,8 +18,8 @@ namespace SolverLogic
         }
         public SolveResult Solve(List<Tile> boardTiles, List<Tile> handTiles)
         {
-
-            return null;
+            var set=new TileSetForCurrentHand(boardTiles, handTiles);
+            return solver.Solve(set);
         }
     }
 }
