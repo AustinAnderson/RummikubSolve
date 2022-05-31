@@ -43,74 +43,77 @@ namespace SolverLogic
             var done = false;
             int currentDigit = 0;
             int currentPossibility = 0;
-            int[] lasts = groups.Select(x => x.PossibilityCount - 1).ToArray();
-            //which possibility on each group
-            int[] maxConfs = new int[groups.Count];
-            while (!done)
+            List<Tile[]>? finalGroups = new List<Tile[]>();
+            if (groups.Count > 0)
             {
-                confs[currentPossibility] = new GroupConf(maxConfs);
-                if (maxConfs[currentDigit]==lasts[currentDigit])
+                int[] lasts = groups.Select(x => x.PossibilityCount - 1).ToArray();
+                //which possibility on each group
+                int[] maxConfs = new int[groups.Count];
+                while (!done)
                 {
-                    while (!done && maxConfs[currentDigit]==lasts[currentDigit])
+                    confs[currentPossibility] = new GroupConf(maxConfs);
+                    if (maxConfs[currentDigit] == lasts[currentDigit])
                     {
-                        currentDigit++;
-                        if(currentDigit >= groups.Count)
+                        while (!done && maxConfs[currentDigit] == lasts[currentDigit])
                         {
-                            done = true;
+                            currentDigit++;
+                            if (currentDigit >= groups.Count)
+                            {
+                                done = true;
+                            }
+                        }
+                        if (!done)
+                        {
+                            maxConfs[currentDigit]++;
+                            for (int i = 0; i < currentDigit; i++)
+                            {
+                                maxConfs[i] = 0;
+                            }
+                            currentDigit = 0;
                         }
                     }
-                    if (!done)
+                    else
                     {
                         maxConfs[currentDigit]++;
-                        for(int i = 0; i < currentDigit; i++)
-                        {
-                            maxConfs[i] = 0;
-                        }
-                        currentDigit = 0;
                     }
+                    currentPossibility++;
+                }
+
+                int score = int.MaxValue;
+                GroupConf solutionKey = default;
+                var groupIterable = new MaxGroupIterable(groups);
+                var scorer = new RunScorer(rainbowTable);
+                Parallel.For(0, confs.Length, new ParallelOptions { MaxDegreeOfParallelism = 20 }, i =>
+                  {
+                //value type so copy
+                var unusedTilesState = baseUnusedTiles;
+                      groupIterable.MarkUnusedForConf(ref unusedTilesState, confs[i]);
+                      confs[i].score = scorer.Score(ref unusedTilesState);
+                  });
+                for (int i = 0; i < confs.Length; i++)
+                {
+                    if (confs[i].score < score)
+                    {
+                        score = confs[i].score;
+                        solutionKey = confs[i];
+                    }
+                }
+                watch.Stop();
+                Console.WriteLine("done in " + watch.Elapsed.TotalSeconds + " seconds");
+                if (score < int.MaxValue)
+                {
+                    Console.WriteLine("Solution found at");
+                    Console.WriteLine($"[{solutionKey}]");
                 }
                 else
                 {
-                    maxConfs[currentDigit]++;
+                    Console.WriteLine("no solution found");
                 }
-                currentPossibility++;
+                //with the solution key, pick that configuration of groups,
+                var allGroups = new MaxGroupIterable(groups);
+                finalGroups = allGroups.GetGroupsForKey(solutionKey);
+                //and now actually find the most possible runs with the remaining tiles
             }
-
-            int score = int.MaxValue;
-            GroupConf solutionKey = default;
-            var groupIterable = new MaxGroupIterable(groups);
-            var scorer = new RunScorer(rainbowTable);
-            Parallel.For(0,confs.Length,new ParallelOptions { MaxDegreeOfParallelism = 20 }, i =>
-            {
-                //value type so copy
-                var unusedTilesState = baseUnusedTiles;
-                groupIterable.MarkUnusedForConf(ref unusedTilesState,confs[i]);
-                confs[i].score = scorer.Score(ref unusedTilesState);
-            });
-            for(int i = 0; i < confs.Length; i++)
-            {
-                if (confs[i].score < score)
-                {
-                    score = confs[i].score;
-                    solutionKey = confs[i];
-                }
-            }
-            watch.Stop();
-            Console.WriteLine("done in "+watch.Elapsed.TotalSeconds+ " seconds");
-            if (score < int.MaxValue)
-            {
-                Console.WriteLine("Solution found at");
-                Console.WriteLine($"[{solutionKey}]");
-            }
-            else
-            {
-                Console.WriteLine("no solution found");
-            }
-            //with the solution key, pick that configuration of groups,
-            var allGroups = new MaxGroupIterable(groups);
-            var finalGroups = allGroups.GetGroupsForKey(solutionKey);
-            //and now actually find the most possible runs with the remaining tiles
-
             var finder = new RunFinder(new RunSolver());
             var finalRuns = finder.FindRuns(
                 tileSet.Tiles.Except(finalGroups.SelectMany(t=>t))

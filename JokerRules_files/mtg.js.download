@@ -1,0 +1,16 @@
+﻿// Some JS to get autocard working pretty like on board and card games
+//   https://boardgames.meta.stackexchange.com/questions/726/please-add-support-for-the-magic-autocard-window
+
+StackExchange.ready(
+    function () {
+        $('.mtg-autocard').click(
+            function () {
+                var link = $(this).attr('href');
+
+                window.open(link, "autocard" + (+new Date()), "toolbar=0, location=0, directories=0, status=0,menubar=0, scrollbars=0, resizable=0, width=770, height=890");
+
+                return false;
+            }
+        );
+    }
+);
