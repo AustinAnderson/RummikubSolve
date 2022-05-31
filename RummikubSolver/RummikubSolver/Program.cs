@@ -2,6 +2,7 @@
 using RunsRainbowTableGenerator;
 using SharedModels;
 using SolverLogic;
+using SolverLogic.JokerHandling;
 using SolverLogic.Models;
 using System.Diagnostics;
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SolverLogic
+namespace SolverLogic.JokerHandling
 {
     public class JokerHandlingSolver
     {
