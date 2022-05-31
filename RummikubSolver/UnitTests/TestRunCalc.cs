@@ -126,7 +126,7 @@ namespace TestRunCalc
                 { keyT, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
                 { keyY, new RunResult(0b00000000000000000000000000000000)}
             }));
-            Assert.AreEqual(int.MaxValue,scorer.Score(ref unusedCalcState));
+            Assert.AreEqual(ushort.MaxValue,scorer.Score(ref unusedCalcState));
         }
         [TestMethod]
         public void TestThatOneCaseThatFailed()

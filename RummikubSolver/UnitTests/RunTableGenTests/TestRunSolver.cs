@@ -23,7 +23,7 @@ namespace TestRunSolver
         {
             var solver = new RunSolver();
             var res = solver.Solve(origs, dups);
-            int unusedCount = expectedOrigUnuseds.Count(x => x) + expectedDupsUnused.Count(x => x);
+            ushort unusedCount = (ushort)(expectedOrigUnuseds.Count(x => x) + expectedDupsUnused.Count(x => x));
             var expected = new RunResult(expectedOrigUnuseds.Concat(expectedDupsUnused).ToArray());
             expected.ScoreIfValid = unusedCount;
             Assert.AreEqual(expected, res, "orig to dups");

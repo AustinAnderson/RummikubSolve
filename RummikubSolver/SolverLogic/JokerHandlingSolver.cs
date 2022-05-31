@@ -10,17 +10,16 @@ namespace SolverLogic
 {
     public class JokerHandlingSolver
     {
-        /*
         private readonly Solver solver;
 
         public JokerHandlingSolver(IRunResultRainbowTable table)
         {
             solver = new Solver(table);
         }
-        public SolveResult solve(List<Tile> boardTiles, List<Tile> handTiles)
+        public SolveResult Solve(List<Tile> boardTiles, List<Tile> handTiles)
         {
 
+            return null;
         }
-        */
     }
 }

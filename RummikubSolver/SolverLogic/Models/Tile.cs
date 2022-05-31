@@ -42,15 +42,25 @@ namespace SolverLogic.Models
                 };
             }
         }
-        public int? EquivalentHandTileId { get; set; }
-        public bool IsBoardTile { get; set; }
-        public int Number { get; private set; }
-        public int Id { get; set; }
-        public int Originality { get; set; }
+        public Tile(Tile other)
+        {
+            this.EquivalentHandTileId = other.EquivalentHandTileId;
+            this.IsBoardTile = other.IsBoardTile;
+            this.Id = other.Id;
+            this.Originality = other.Originality;
+            this.Color = other.Color;
+            this.Number = other.Number;
+            this.IsJoker = other.IsJoker;
+        }
+        public int? EquivalentHandTileId { get; protected set; }
+        public bool IsBoardTile { get; protected set; }
+        public int Id { get; protected set; }
+        public int Originality { get; protected set; }
         /// <summary>
         /// the index of the bit array for key 123456789ABCD123456789ABCD
         /// </summary>
         public int CanonicalIndex => (Number + Originality * 13) - 1;
+        public int Number { get; private set; }
         public TileColor Color { get; private set; }
         public bool IsJoker { get; private set; }
         public static bool operator < (Tile l, Tile r) => Comparer.Compare(l, r) < 0;

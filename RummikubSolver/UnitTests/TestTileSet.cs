@@ -23,7 +23,7 @@ namespace UnitTests
                 _ => ""+desc[0]
             };
 
-            var tile = new Tile(num + desc[1]);
+            var tile = new TileSetForCurrentHand.TileSetTile(new Tile(num + desc[1]));
 
             if (includeId)
             {
