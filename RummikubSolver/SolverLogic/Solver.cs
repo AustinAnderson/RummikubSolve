@@ -88,7 +88,7 @@ namespace SolverLogic
                 //value type so copy
                 var unusedTilesState = baseUnusedTiles;
                       groupIterable.MarkUnusedForConf(ref unusedTilesState, confs[i]);
-                      confs[i].score = scorer.Score(ref unusedTilesState);
+                      confs[i].score = scorer.Score(ref unusedTilesState,0);
                   });
                 for (int i = 0; i < confs.Length; i++)
                 {

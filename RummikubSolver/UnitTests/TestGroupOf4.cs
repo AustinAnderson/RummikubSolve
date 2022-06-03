@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RunsRainbowTableGenerator;
 using SolverLogic.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,11 @@ namespace TestMaxGroupIteration
             var selected = tiles.TileExcept("3B");
             MaxGroupTestUtil.AssertGroupedMatches(selected, group,1);
             MaxGroupTestUtil.AssertCurrentUnusedMatches(tiles.Except(selected), group,1);
+            uint x = 0;
+            x.Set(0, true);
+            //                12345678901234567890123456789012
+            Assert.AreEqual(0b10000000000000000000000000000000, x);
+
         }
         [TestMethod]
         public void SecondGroupOf3Option()

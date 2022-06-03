@@ -60,6 +60,13 @@ namespace SolverLogic.Models
         /// the index of the bit array for key 123456789ABCD123456789ABCD
         /// </summary>
         public int CanonicalIndex => (Number + Originality * 13) - 1;
+
+        internal void SetJokerValue(int num, TileColor tileColor)
+        {
+            Number = num;
+            Color = tileColor;
+        }
+
         public int Number { get; private set; }
         public TileColor Color { get; private set; }
         public bool IsJoker { get; private set; }

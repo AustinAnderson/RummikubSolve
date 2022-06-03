@@ -6,6 +6,33 @@ using System.Threading.Tasks;
 
 namespace RunsRainbowTableGenerator
 {
+    public static class UInt32Ext
+    {
+        public static void Set(this ref uint dataRef, int index, bool value)
+        {
+            //            12345678901234567890123456789012
+            uint mask = 0b10000000000000000000000000000000;
+            uint setBit= 0;
+            if (value)
+            {
+                setBit = mask;
+            }
+            //clear the bit by anding with not of that bit, then set it to true or false
+            dataRef = (dataRef & (~(mask >> index)) | (setBit >> index));
+        }
+        public static bool Get(this uint dataRef, int index)
+        {
+            //            12345678901234567890123456789012
+            uint mask = 0b10000000000000000000000000000000;
+            //  ==1 ==0
+            //    vv
+            //00001010100001001001001001010
+            //----------------------------
+            //00001000000000000000000000000
+            //00000100000000000000000000000
+            return (dataRef & (mask >> index)) != 0;
+        }
+    }
     public struct BitVector32
     {
         private uint data;
@@ -24,6 +51,20 @@ namespace RunsRainbowTableGenerator
             for(int i = 0; i < init.Length; i++)
             {
                 this[i] = init[i];
+            }
+        }
+        public int SetCount
+        {
+            get
+            {
+                int count = 0;
+                uint data = Data;
+                while (data != 0)
+                {
+                    count++;
+                    data &= data - 1;
+                }
+                return count;
             }
         }
         public override string ToString() 
