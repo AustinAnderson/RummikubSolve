@@ -32,6 +32,16 @@ namespace RunsRainbowTableGenerator
             //00000100000000000000000000000
             return (dataRef & (mask >> index)) != 0;
         }
+        public static int SetCount(this uint dataCpy)
+        {
+            int count = 0;
+            while (dataCpy != 0)
+            {
+                count++;
+                dataCpy &= dataCpy - 1;
+            }
+            return count;
+        }
     }
     public struct BitVector32
     {
@@ -53,20 +63,7 @@ namespace RunsRainbowTableGenerator
                 this[i] = init[i];
             }
         }
-        public int SetCount
-        {
-            get
-            {
-                int count = 0;
-                uint data = Data;
-                while (data != 0)
-                {
-                    count++;
-                    data &= data - 1;
-                }
-                return count;
-            }
-        }
+        public int SetCount => data.SetCount();
         public override string ToString() 
         {
             return Convert.ToString(Data, 2).PadLeft(32,'0');

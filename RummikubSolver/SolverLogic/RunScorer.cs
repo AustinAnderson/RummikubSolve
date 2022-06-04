@@ -109,6 +109,57 @@ namespace SolverLogic
 
             return score;
         }
+
+
+        /*
+       invalidMasked@i+1 invalidMasked@i+14 newUnused@i+1 newUnused@i+14
+           0                   0              0              0                invalid
+           0                   0              0              1                newUnused@i+14
+           0                   0              1              0                newUnused@i+1
+           0                   0              1              1                newUnused@i+1
+           0                   1              0              0                invalid
+           0                   1              0              1                newUnused@i+14
+           0                   1              1              0                invalid
+           0                   1              1              1                newUnused@i+14
+           1                   0              0              0                invalid
+           1                   0              0              1                invalid
+           1                   0              1              0                newUnused@i+1
+           1                   0              1              1                newUnused@i+1
+           1                   1              0              0                invalid
+           1                   1              0              1                invalid
+           1                   1              1              0                invalid
+           1                   1              1              1                invalid
+        */
+
+        bool checkAndSetBit(uint invalidMaskedCpy, ref uint data,int index)
+        {
+            bool wasSet = false;
+            const bool t = true;
+            const bool f = false;
+            var switchVal = (
+                invalidMaskedCpy.Get(index),
+                invalidMaskedCpy.Get(index + 13),
+                data.Get(index),
+                data.Get(index + 13)
+            );
+            var indexShift = switchVal switch
+            {
+                (f, f, f, t) => 13,
+                (f, f, t, f) => 0,
+                (f, f, t, t) => 0,
+                (f, t, f, t) => 13,
+                (f, t, t, t) => 13,
+                (t, f, t, f) => 0,
+                (t, f, t, t) => 0,
+                _ => -1
+            };
+            if (indexShift >= 0)
+            {
+                wasSet = true;
+                data.Set(index + indexShift, false);
+            }
+            return wasSet;
+        }
         private JokerScores ScoreWithJoker(RunResult res, BitVector32 invalidIfUnusedFlags, int jokerCount)
         {
             JokerScores result = new JokerScores
@@ -134,44 +185,49 @@ namespace SolverLogic
             {
                 if (jokerCount == 1)
                 {
-                    //looking for region of inv mask
-                    //where bits of unused within that regions bounds
-                    //have at most one 0 (gap that can be filled with joker)
-                    //inv mask 1000010000
-                    //  unused 1010010101
-
-                    //inv mask 1000110000
-                    //  unused 1011011001
-
-                    //inv mask is the & of unused and invalid,
-                    //so can or inv mask and unused to find region of 1's with at most 1 zero in it
-                    //actually will be exactly one zero, otherwise it would already be a run
-                    uint newUnused = res.Unused;
-                    var setBits = invalidMasked | res.Unused;
-                    bool startedSearching = false;
-                    for (int i = 0; i < 31; i++)
+                    //foreach false bit in unused,
+                    //if would be part of 3 true bits if it was true (including dup set),
+                    //set all those to false
+                    //if invalid & newVal now clear and newVal bitCount < current min,
+                    //update ScoreWithOne
+                    
+                    List<int> setBitIndexes = new List<int>();
+                    for(int i = 0; i < 26; i++)
                     {
-                        if(!startedSearching && invalidMasked.Get(i))
+                        var newUnused = res.Unused;
+                        if (!newUnused.Get(i))
                         {
-                            startedSearching = true;
-                        }
-                        else if(startedSearching)
-                        {
-                            if(!setBits.Get(i) && !setBits.Get(i + 1))
+                            //test joker as 1X_0
+                            if (i == 0)
                             {
-                                //not valid
-                                result.ScoreWithOne = ushort.MaxValue;
-                                break;
+                                if(checkAndSetBit(invalidMasked,ref newUnused,i+1) && checkAndSetBit(invalidMasked,ref newUnused, i + 2))
+                                {
+
+                                }
+                            }
+                            else if(i < 13)
+                            {
+
                             }
                         }
-                        newUnused.Set(i, false);
                     }
+                }
+                else if(jokerCount == 2)
+                {
+
+                }
+            }
+            else
+            {
+                if (jokerCount == 1)
+                {
+
+                }
+                else if (jokerCount == 2)
+                {
                 }
             }
             return result;
-
-
-
         }
         private struct JokerScores
         {
