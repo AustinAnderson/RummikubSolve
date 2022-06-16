@@ -10,5 +10,6 @@ namespace SolverLogic.Models
     {
         public List<InitialRun> Runs { get; set; } = new List<InitialRun>();
         public List<InitialGroup> Groups { get; set; } = new List<InitialGroup>();
+        public List<Tile> Flattened => Runs.Cast<InitialList>().Concat(Groups).SelectMany(x=>x).ToList();
     }
 }

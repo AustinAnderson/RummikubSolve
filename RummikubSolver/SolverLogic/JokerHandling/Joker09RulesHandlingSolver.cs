@@ -21,17 +21,22 @@ namespace SolverLogic.JokerHandling
         //putting the joker set in and ignoring the rest
         public JokerAwareSolveResult Solve(CurrentBoard board, InitialHand hand)
         {
+            return new JokerAwareSolveResult
+            {
+                SolveResult = solver.Solve(new TileSetForCurrentHand(board.Flattened, hand.ToList()))
+            };
+            /*
             JokerAwareSolveResult res;
             if (hand.All(t => !t.IsJoker))
             {
-                res = null;
-                //res=SolveIfNoJokerInHand(board, hand);
+                res=SolveIfNoJokerInHand(board, hand);
             }
             else
             {
                 res = null;
             }
             return res;
+            */
         }
         public JokerAwareSolveResult SolveIfNoJokerInHand(CurrentBoard board, InitialHand hand)
         {

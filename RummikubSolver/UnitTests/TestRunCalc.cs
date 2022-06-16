@@ -70,7 +70,7 @@ namespace TestRunCalc
                 { keyT, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
                 { keyY, new RunResult(0b00000000000000000000000000000000)}
             }));
-            Assert.AreEqual(4,scorer.Score(ref unusedCalcState,0));
+            Assert.AreEqual(4,scorer.Score(ref unusedCalcState));
 
         }
         //[TestMethod]
@@ -126,7 +126,7 @@ namespace TestRunCalc
                 { keyT, new RunResult(0b10010000000000000000000000000000) { ScoreIfValid=2 } },
                 { keyY, new RunResult(0b00000000000000000000000000000000)}
             }));
-            Assert.AreEqual(ushort.MaxValue,scorer.Score(ref unusedCalcState,0));
+            Assert.AreEqual(ushort.MaxValue,scorer.Score(ref unusedCalcState));
         }
         [TestMethod]
         public void TestThatOneCaseThatFailed()
@@ -170,7 +170,7 @@ namespace TestRunCalc
                 { keyT, new RunResult(0b10010010000000000000000000000000) { ScoreIfValid=3 } },
                 { keyY, new RunResult(0b00000000000100000000000000000000) { ScoreIfValid=1 } }
             }));
-            Assert.AreEqual(9,scorer.Score(ref unusedCalcState,0));
+            Assert.AreEqual(9,scorer.Score(ref unusedCalcState));
         }
     }
 }

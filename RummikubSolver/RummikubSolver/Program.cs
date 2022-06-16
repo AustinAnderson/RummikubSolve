@@ -28,18 +28,18 @@ var hand = StringNotationParser.ParseHand(
         );
         //*/
 var res = solver.Solve(board, hand);
-/*
-foreach(var group in res.Groups)
+//*
+foreach(var group in res.SolveResult.Groups)
 {
     Console.WriteLine(string.Join(" ",group.Select(t=>t.DisplayString)));
 }
-foreach(var run in res.Runs)
+foreach(var run in res.SolveResult.Runs)
 {
     Console.WriteLine(string.Join(" ", run.Select(t=>t.DisplayString)));
 }
 Console.WriteLine("------------------------------------------------------------------");
-Console.WriteLine(string.Join("        ", res.Hand.Select(t=>t.DisplayString)));
-*/
+Console.WriteLine(string.Join("        ", res.SolveResult.Hand.Select(t=>t.DisplayString)));
+//*/
 //which one is missing is which bit is set when counting in bin
 //1 2 3 4 5 | 0 0 0 0 0
 //1 2 3 4   | 0 0 0 0 1

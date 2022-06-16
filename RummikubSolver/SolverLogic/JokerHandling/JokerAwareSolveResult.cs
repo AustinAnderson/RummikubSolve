@@ -8,7 +8,7 @@ namespace SolverLogic.Models
 {
     public class JokerAwareSolveResult
     {
-        List<JokerClearMove> JokerClearingMoves { get; set; }
-        SolveResult SolveResult { get; set; }
+        public List<JokerClearMove> JokerClearingMoves { get; set; }
+        public SolveResult SolveResult { get; set; }
     }
 }
