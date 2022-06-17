@@ -13,6 +13,11 @@ namespace SolverLogic
     public class Solver
     {
         private readonly IRunResultRainbowTable rainbowTable;
+        /*
+        private readonly TextWriter output = Console.Out;
+        /*/
+        private readonly TextWriter output = new StringWriter();
+        //*/
 
         public Solver(IRunResultRainbowTable rainbowTable)
         {
@@ -34,11 +39,11 @@ namespace SolverLogic
             foreach(var group in groups)
             {
                 expectedPossibilitiesCount *= group.PossibilityCount;
-                Console.WriteLine(group);
+                output.WriteLine(group);
             }
 
-            Console.WriteLine();
-            Console.WriteLine($"Checking {expectedPossibilitiesCount} possibilities...");
+            output.WriteLine();
+            output.WriteLine($"Checking {expectedPossibilitiesCount} possibilities...");
             var confs = new GroupConf[expectedPossibilitiesCount];
             var done = false;
             int currentDigit = 0;
@@ -99,14 +104,15 @@ namespace SolverLogic
                     }
                 }
                 watch.Stop();
-                Console.WriteLine("done in " + watch.Elapsed.TotalSeconds + " seconds");
+                output.WriteLine("done in " + watch.Elapsed.TotalSeconds + " seconds");
                 if (score < int.MaxValue)
                 {
-                    Console.WriteLine("Solution found at");
-                    Console.WriteLine($"[{solutionKey}]");
+                    output.WriteLine("Solution found at");
+                    output.WriteLine($"[{solutionKey}]");
                 }
                 else
                 {
+                    output.WriteLine("no solution found");
                     Console.WriteLine("no solution found");
                 }
                 //with the solution key, pick that configuration of groups,

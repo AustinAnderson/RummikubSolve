@@ -78,5 +78,18 @@ namespace SolverLogic.Models
         public void RemoveAt(int index) => tiles.RemoveAt(index);
         public IEnumerator<Tile> GetEnumerator() => tiles.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public int IndexWhere(Predicate<Tile> criteria)
+        {
+            int index = -1;
+            for(int i = 0; i < Count; i++)
+            {
+                if (criteria(this[i]))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
     }
 }

@@ -40,6 +40,8 @@ namespace SolverLogic.JokerHandling
         }
         public JokerAwareSolveResult SolveIfNoJokerInHand(CurrentBoard board, InitialHand hand)
         {
+            var res = new JokerAwareSolveResult();
+            //updateJokerValues to have the joker tile contain what it currently represents
             foreach(var group in board.Groups)
             {
                 group.UpdateJokerValues();
@@ -54,16 +56,41 @@ namespace SolverLogic.JokerHandling
             //otherwise solve for each way you can minimize the tiles tied up with the joker with the tiles not tied up with it
             for(int i=board.Groups.Count-1;i>=0;i--)
             {
-                if (board.Groups[i].JokerIndexes.Count == 1)
+                if (board.Groups[i].JokerIndexes.Count == 1 && MoveAvailableWithJoker(hand))
                 {
-                    
+                        int jokerIndex = board.Groups[i].JokerIndexes[0];
+                        var swappableIndex = hand.IndexWhere(x => x.SameValue(board.Groups[i][jokerIndex]));
+                        if (swappableIndex != -1)
+                        {
+                            var clearMove = new JokerClearMove(board.Groups[i]);
+                            SwapAtIndexes(board.Groups[i], jokerIndex, hand, swappableIndex);
+                            clearMove.AfterClearing = new List<InitialList> { board.Groups[i] };
+                            res.JokerClearingMoves.Add(clearMove);
+                        }
+                    //must be tentative move, that can be backed out if can't play with joker from hand, or check first
+                }
+                else if(board.Groups[i].JokerIndexes.Count == 2)
+                {
+                    int jokerIndex = board.Groups[i].JokerIndexes[0];
                 }
             }
             return null;
         }
-        private void BuyJokerFromGroup( int index, List<InitialGroup> list, InitialHand hand)
-        {
 
+        //TODO: change to actually find the move
+        private bool MoveAvailableWithJoker(InitialHand hand)
+        {
+            return true;
+            //uh oh, not garunteed for the play that uses the most tiles to be the best,
+            //need to check each univers of possibilities
+
+        }
+
+        private void SwapAtIndexes(InitialList list1, int index1, InitialList list2, int index2)
+        {
+            var temp = list1[index1];
+            list1[index1] = list2[index2];
+            list2[index2] = temp;
         }
     }
 }

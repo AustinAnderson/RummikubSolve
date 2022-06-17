@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace RunsRainbowTableGenerator
             return count;
         }
     }
-    public struct BitVector32
+    public struct BitVector32:IEquatable<BitVector32>
     {
         private uint data;
         public uint Data => data;
@@ -81,6 +82,11 @@ namespace RunsRainbowTableGenerator
         {
             data |= other.data;
         }
+        public override bool Equals([NotNullWhen(true)] object? obj)
+            => obj is BitVector32 other && Equals(other);
+        public override int GetHashCode() => (int)data;
+        public bool Equals(BitVector32 other) => data == other.data;
+
         public static bool GetBit(uint dataRef, int index)
         {
             //            12345678901234567890123456789012
@@ -105,5 +111,6 @@ namespace RunsRainbowTableGenerator
             //clear the bit by anding with not of that bit, then set it to true or false
             dataRef = (dataRef & (~(mask >> index)) | (setBit >> index));
         }
+
     }
 }

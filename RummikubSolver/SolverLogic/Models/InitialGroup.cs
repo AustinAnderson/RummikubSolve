@@ -9,6 +9,14 @@ namespace SolverLogic.Models
 {
     public class InitialGroup:InitialList
     {
+        public InitialGroup() { }
+        public InitialGroup(InitialGroup other) 
+        { 
+            foreach(var tile in other)
+            {
+                Add(new Tile(tile));
+            }
+        }
         protected override void ValidateModification(Tile[] preposedNewState)
         {
             string changeRep = ToString()+"=>"+StringRep(preposedNewState);

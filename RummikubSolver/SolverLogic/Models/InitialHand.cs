@@ -8,6 +8,14 @@ namespace SolverLogic.Models
 {
     public class InitialHand : InitialList
     {
+        public InitialHand() { }
+        public InitialHand(InitialHand other)
+        {
+            foreach(var tile in other)
+            {
+                Add(new Tile(tile));
+            }
+        }
         public override void UpdateJokerValues()
         {
             //no op, jokers can be anything

@@ -70,6 +70,19 @@ namespace SolverLogic.Models
         public List<List<Tile>> Groups { get; }
         public List<List<Tile>> Runs { get; }
         public List<Tile> Hand { get; }
+        public void PrintResult()
+        {
+            foreach(var group in Groups)
+            {
+                Console.WriteLine(string.Join(" ",group.Select(t=>t.DisplayString)));
+            }
+            foreach(var run in Runs)
+            {
+                Console.WriteLine(string.Join(" ", run.Select(t=>t.DisplayString)));
+            }
+            Console.WriteLine("------------------------------------------------------------------");
+            Console.WriteLine(string.Join("        ", Hand.Select(t=>t.DisplayString)));
 
+        }
     }
 }

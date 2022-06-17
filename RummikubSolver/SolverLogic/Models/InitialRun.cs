@@ -9,6 +9,14 @@ namespace SolverLogic.Models
 {
     public class InitialRun:InitialList
     {
+        public InitialRun() { }
+        public InitialRun(InitialRun other) 
+        { 
+            foreach(var tile in other)
+            {
+                Add(new Tile(tile));
+            }
+        }
 
         protected override void ValidateModification(Tile[] preposedNewState)
         {
