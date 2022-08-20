@@ -88,13 +88,13 @@ namespace SolverLogic
                 GroupConf solutionKey = default;
                 var groupIterable = new MaxGroupIterable(groups);
                 var scorer = new RunScorer(rainbowTable);
-                Parallel.For(0, confs.Length, new ParallelOptions { MaxDegreeOfParallelism = 20 }, i =>
+                for(int i = 0; i < confs.Length; i++)
                 {
                     //value type so copy
                     var unusedTilesState = baseUnusedTiles;
                     groupIterable.MarkUnusedForConf(ref unusedTilesState, confs[i]);
                     confs[i].score = scorer.Score(ref unusedTilesState);
-                });
+                };
                 for (int i = 0; i < confs.Length; i++)
                 {
                     if (confs[i].score < score)

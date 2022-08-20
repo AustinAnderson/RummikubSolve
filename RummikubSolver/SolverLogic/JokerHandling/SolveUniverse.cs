@@ -7,18 +7,34 @@ using System.Threading.Tasks;
 
 namespace SolverLogic.JokerHandling
 {
-    internal class SolveUniverse
+    public class SolveUniverse
     {
+        public SolveUniverse(CurrentBoard board, InitialHand hand, JokerAwareSolveResult result)
+        {
+            Board = board;
+            Hand = hand;
+            Result = result;
+        }
         public SolveUniverse(CurrentBoard board, InitialHand hand)
         {
             Board = board;
             Hand = hand;
+            Result = new JokerAwareSolveResult()
+            {
+                JokerClearingMoves = new List<JokerClearMove>(),
+                SolveResult = new SolveResult(
+                    board.Groups.Select(l => l.ToList()).ToList(),
+                    board.Runs.Select(l => l.ToList()).ToList(),
+                    hand.ToList()
+                )
+            };
         }
         public CurrentBoard Board { get; }
         public InitialHand Hand { get; }
+        public JokerAwareSolveResult Result { get; }
         public SolveUniverse Branch()
         {
-            return new SolveUniverse(new CurrentBoard(Board), new InitialHand(Hand));
+            return new SolveUniverse(new CurrentBoard(Board), new InitialHand(Hand), new JokerAwareSolveResult(Result));
         }
     }
 }

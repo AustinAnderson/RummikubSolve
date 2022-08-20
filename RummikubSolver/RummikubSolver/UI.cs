@@ -24,6 +24,7 @@ namespace RummikubSolver
             {
                 Console.WriteLine("press enter to read and solve state from "+stateFile.FullName);
                 Console.ReadLine();
+                Console.Clear();
                 if (!stateFile.Exists)
                 {
                     Console.WriteLine(stateFile.FullName+"doesn't exist, please create it");
@@ -41,7 +42,7 @@ namespace RummikubSolver
                 {
                     solver.Solve(
                         new TileSetForCurrentHand(
-                            StringNotationParser.ParseBoardSet(splits[0]).Flattened,
+                            StringNotationParser.ParseBoardShort(splits[0]).Flattened,
                             StringNotationParser.ParseHand(splits[1]).ToList()
                         )
                     ).PrintResult();

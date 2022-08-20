@@ -8,6 +8,11 @@ namespace SolverLogic.Models
 {
     public class JokerClearMove
     {
+        public JokerClearMove(JokerClearMove other)
+        {
+            AfterClearing = other.AfterClearing.Copy();
+            InitialRunOrGroupWithJoker = other.InitialRunOrGroupWithJoker.Copy();
+        }
         public JokerClearMove(InitialList initialRunOrGroup)
         {
             InitialRunOrGroupWithJoker = new InitialRun();
@@ -21,7 +26,7 @@ namespace SolverLogic.Models
             }
         }
         public InitialList InitialRunOrGroupWithJoker { get; }
-        public List<InitialList> AfterClearing { get; set; }
+        public InitialList AfterClearing { get; set; }
         /// <summary>
         /// only applicable in 09 rules
         /// </summary>

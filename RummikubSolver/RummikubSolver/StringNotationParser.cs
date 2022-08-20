@@ -32,6 +32,51 @@ namespace RummikubSolver
             }
             return tiles;
         }
+        public static CurrentBoard ParseBoardShort(string rep)
+        {
+            rep = rep.ToLower().ReplaceLineEndings().Replace(Environment.NewLine, " ");
+            const string digits = "0123456789";
+            CurrentBoard board = new CurrentBoard();
+            var matches = rep.Split(" ");
+            var matchesNoEmpty=matches.Where(x => !string.IsNullOrWhiteSpace(x));
+            foreach(var match in matchesNoEmpty)
+            {
+                var trimmed=match.Trim();
+                if (trimmed.Contains("-"))
+                {
+                    char color = trimmed.Last();
+                    var range=trimmed.Substring(0, trimmed.Length - 1).Split("-").Select(num => int.Parse(num)).ToArray();
+                    var r=new InitialRun();
+                    for(int i = range[0]; i <= range[1]; i++)
+                    {
+                        r.Add(new Tile("" + i + color.ToString().ToUpper()));
+                    }
+                    board.Runs.Add(r);
+                }
+                else
+                {
+                    string colors = "";
+                    string number = "";
+                    if(digits.Contains(trimmed[1]))
+                    {
+                        number = ""+trimmed[0]+trimmed[1];
+                        colors = trimmed.Substring(2);
+                    }
+                    else
+                    {
+                        number = ""+trimmed[0];
+                        colors = trimmed.Substring(1);
+                    }
+                    var g=new InitialGroup();
+                    foreach(char color in colors.ToUpper())
+                    {
+                        g.Add(new Tile(number + color));
+                    }
+                    board.Groups.Add(g);
+                }
+            }
+            return board;
+        }
         /// <summary>
         //{ nB,nR,nT, nY} [ nB, n+1B, n+2B...]
         /// </summary>

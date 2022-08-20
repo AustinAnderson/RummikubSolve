@@ -91,5 +91,21 @@ namespace SolverLogic.Models
             }
             return index;
         }
+        public InitialList Copy()
+        {
+            if(this is InitialRun r)
+            {
+                return new InitialRun(r);
+            }
+            else if(this is InitialGroup g)
+            {
+                return new InitialGroup(g);
+            }
+            else if(this is InitialHand h)
+            {
+                return new InitialHand(h);
+            }
+            throw new NotImplementedException("need to implement copy constructor for " + this.GetType().Name);
+        }
     }
 }

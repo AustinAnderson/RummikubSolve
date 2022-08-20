@@ -43,6 +43,12 @@ namespace SolverLogic.Models
                 }
             }
         }
+        internal SolveResult(List<List<Tile>> groups, List<List<Tile>> runs, List<Tile> hand)
+        {
+            Groups = groups;
+            Runs = runs;
+            Hand = hand;
+        }
         internal SolveResult(TileSetForCurrentHand allTiles,List<Tile[]> finalGroups, RunsAndRemainder finalRuns)
         {
             var tilesById = allTiles.Tiles.ToDictionary(t => t.Id, t => new RefTile(t));
